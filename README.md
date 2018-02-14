@@ -3,7 +3,7 @@ Hashtronic is a trading arbitrage bot that makes use of Smart Contracts from the
 The program does the following things, which are outlined with comments in `./index.js`:
 1. Send ether from default *geth* wallet to E0S Crowdsale Contract
 2. Claim your E0S tokens to your *geth* account wallet the following morning.
-3. Send your E0S tokens to a cryptoi trading exchange
+3. Send your E0S tokens to a cry!pto trading exchange
 4. Performs a trade of E0S/ETH using the exchange's dev API.
 5. Sends ETH back to default *geth* wallet. The quantity of this ETH is greater than what you started with in Step 1.
 6. Repeat from Step 1.
@@ -13,8 +13,10 @@ The program does the following things, which are outlined with comments in `./in
 https://github.com/ethereum
 https://ethereum.org/cli for geth CLI basics
 https://github.com/ethereum/wiki/wiki  
+Ethereum is in ~/Library/Ethereum (Mac OS) and the blockchain is in ~/Library/Ethereum/geth/chaindata    
+Private Keys are in ~/Library/Ethereum/keystore (Linux/Windows)[https://github.com/ethereum/go-ethereum/wiki/Backup-&-restore]  
 **geth** - Go Implementation of an API to the thereum node. Runs the Ethereum node for you.  
-Version as of 02/14/18 1.8
+**Version 1.7.3-stable** (02/14/18), previous versions may use the --fast command which has since been deprecated  
 https://github.com/ethereum/go-ethereum/wiki
 https://github.com/ethereum/go-ethereum/wiki/geth  
 **web3** - Javascript client lib for connecting to your ethereum node. Makes use of solc    https://github.com/ethereum/web3.js/  
@@ -27,32 +29,32 @@ https://github.com/ethereum/go-ethereum/wiki/geth
 CORS will need to be enabled with the appropriate domain set. Otherwise, JavaScript calls are limit by the same-origin policy and requests will fail:
 `geth --rpc --rpccorsdomain "http://localhost:3000"` that's **--rpccorsdomain**
 
-#### But Avoid The Deprecated Code that's all over Stackoverflow
-**DEPRECATED** `geth --fast --cache=1024 --rpcapi eth,web3 --rpc`
-**DEPRECATED** `geth --fast --cache=1024 --rpcaddr "http://localhost" --rpcport 8545`  
-because the **--fast** flag is deprecated since previous versions like geth 1.4.
-geth --fast --cache=1024
-get --fast --cache=1024 --rpcapi eth,web3 --rpc
+#### Avoid The Deprecated Code that's all over Stackoverflow
+the `--fast` flag in `geth --fast --cache=1024` is **DEPRECATED**. I last used it in geth v1.4
+*Note* official documentation says to use `--cache 2048` and not `--cache=2048` like many users says. Unsure if it makes a difference.
 
 #### Avoid unecessary commands that aren't necessary at this time
-`--rpcapi` API's offered over the HTTP-RPC interface (default: "eth,net,web3")
-Can change the default port (8545) and listing address (localhost) with:
-`geth --rpc --rpcaddr <ip> --rpcport <portnumber>`
-
-*some command arguments*
-`--rpcport` default port is 8545 which we're fine with, so omitt this flag
-`--rpcaddr` default is localhost which we're fine with, so omitt this
-
 **Popular commands that won't help us and why**
 `geth --syncmode "fast" --cache 2048` is missing the flag for RPC connections (so can't connect from web3 or a web app)
 `geth --syncmode "fast" --cache 2048 --rpcapi --rpc` not needed
-`geth --syncmode "fast" --cache 2048 --rpc` works
+`--rpcport` default port is 8545 which we're fine with, so omitt this flag
+`--rpcaddr` default is localhost which we're fine with, so omitt this
+`--rpcapi` API's offered over the HTTP-RPC interface (default: "eth,net,web3")
+
+**Correct Command for Starting Geth and your Ethereum Node**
+`geth --syncmode "fast" --cache 2048 --rpc`
 
 If syncronisation is working properly it should settle on log activity like:
-`INFO [02-13|23:32:14] Imported new state entries               count=0    elapsed=8.955ms   processed=323550 pending=15495 retry=0    duplicate=3244 unexpected=9294` where x is the Block Height (latest block)
+`INFO [02-14|17:17:31] Imported new block receipts count=124  elapsed=203.265ms bytes=9311747 number=5086552 hash=a4e3fe…2c9c60 ignored=0` 
+where `number` is the Block Height (i.e. latest block mined), so 5,086,552 blocks in the Ethereum blockchain as of 02/14/17, which are 52GB on my machine. `du -h ~/Library/Ethereum/geth/chaindata` to find out how many GB
 
-starts running on port localhost:XXXX which you'll need for step 2
+Geth is now running on port `localhost:8545` and our node script will communicate to it in step 3.
 
-2. Run the node script using npm start
+2. Import a Private Key (Ethereum Account) to Geth, one that already has Eth 
+In a new shell window (consider doing this before running Geth node. shouldn't hurt to do it afterwards though) 
+`geth account import ../<keyfile>` ../ because don't want your privateKey pasted within this project
+or create a new address/privateKey, (instructions)[https://github.com/ethereum/go-ethereum/wiki/Managing-your-accounts]
+
+3. Run the node script using npm start
 Web3 config makes JRC-20 protocool requests to the node your started on `localhost:8545`. This address:port is specified in the index.js file during web3 instance configuration.
 

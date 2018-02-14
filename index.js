@@ -10,6 +10,7 @@ if (typeof web3 !== 'undefined') {
 }
 console.log('\n======== web3.eth.accounts =======\n', web3.eth.accounts) // []
 
+//*TODO* - need add an account to GETH. see if can access it as web3.eth.accounts[0] 11:59a
 
 // UNLOCK ETHER ACCOUNT ADDRESS
 // Next, we have to specify a default ethereum account to use through the web3.eth.defaultAccount method:
@@ -19,6 +20,19 @@ console.log('\n======== web3.eth.accounts =======\n', web3.eth.accounts) // []
 // Try sending to my own address, from commandLine, first. or doesnt matter, because should ahve txId, will see it or WONT see it under EOS Contract Address Activity
 // unlock account, may need to use Truffle   
 web3.eth.defaultAccount = web3.eth.accounts[0]; // test accounts, ganache. or real.
+
+function checkAllBalances() {
+    const eth = web3.eth
+    var totalBal = 0;
+    for (var acctNum in eth.accounts) {
+        var acct = eth.accounts[acctNum];
+        var acctBal = web3.fromWei(eth.getBalance(acct), "ether");
+        totalBal += parseFloat(acctBal);
+        console.log("  eth.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " ether");
+    }
+    console.log("  Total balance: " + totalBal + " ether");
+};
+// checkAllBalances()
 
 // SEND ETHER TO EOS CROWDSALE CONTRACT ADDRESS
 // w/ gas limit <= 90000. from web3.eth.account wallet?
