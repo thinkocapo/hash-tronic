@@ -60,3 +60,19 @@ Web3 config makes JRC-20 protocool requests to the node your started on `localho
 
 ### Parity
 `parity ui` - starts the UI in `http://127.0.0.1:8180` /#/?token=0tzv-OvXt-WGFZ-CBKh
+^^ starts regular sync which we don't want...
+
+Delete parity db blockchain
+`parity db kill`
+
+`parity --warp` Warp Synchronization - https://github.com/paritytech/parity/wiki/Getting-Synced
+
+try `parity ui --warp --mode=passive` what is --mode=passive?
+
+pruning? https://ethereum.stackexchange.com/questions/3332/what-is-the-parity-light-pruning-mode/4327
+
+warps, and then resumes regulat syncing? not what I want...
+https://github.com/paritytech/parity/wiki/FAQ:-Backup,-Restore,-and-Files
+
+how to use parity, interact with from consoles
+https://github.com/paritytech/parity/wiki/Basic-Usage#javascript-console Applicants > Console
