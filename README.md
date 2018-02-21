@@ -58,6 +58,11 @@ or create a new address/privateKey, (instructions)[https://github.com/ethereum/g
 3. Run the node script using npm start
 Web3 config makes JRC-20 protocool requests to the node your started on `localhost:8545`. This address:port is specified in the index.js file during web3 instance configuration.
 
-### MyEtherWallet API
+### MyEtherWallet
+API
 https://www.myetherapi.com/
+Docker Image
+https://github.com/MyEtherWallet/docker-geth-lb
 
+**Set the Web3.js Provider as the MyEtherWalletAPI**
+as opposed to the localhost:8545 port of the unsycned geth or parity node you're attempting to run
