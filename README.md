@@ -58,3 +58,5 @@ or create a new address/privateKey, (instructions)[https://github.com/ethereum/g
 3. Run the node script using npm start
 Web3 config makes JRC-20 protocool requests to the node your started on `localhost:8545`. This address:port is specified in the index.js file during web3 instance configuration.
 
+### Parity
+`parity ui` - starts the UI in `http://127.0.0.1:8180` /#/?token=0tzv-OvXt-WGFZ-CBKh
