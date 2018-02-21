@@ -66,3 +66,20 @@ https://github.com/MyEtherWallet/docker-geth-lb
 
 **Set the Web3.js Provider as the MyEtherWalletAPI**
 as opposed to the localhost:8545 port of the unsycned geth or parity node you're attempting to run
+
+also erroring a lot, see source code comments...
+
+### EtherScan
+try it
+https://etherscan.io/apis#contracts
+
+but who is the set HttpProvider?
+
+so try:
+
+send raw transaction example
+https://ethereum.stackexchange.com/questions/33205/how-to-send-a-transaction-to-myetherapi-com-with-web3-py, can do this in javascript and it outputs a hash/id, which i can send in url to etherscan?
+
+https://www.reddit.com/r/ethereum/comments/477htl/chain_for_ethereum/ with etherscan
+
+
