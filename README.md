@@ -67,7 +67,7 @@ Delete parity db blockchain
 
 `parity --warp` Warp Synchronization - https://github.com/paritytech/parity/wiki/Getting-Synced
 
-try `parity ui --warp --mode=passive` what is --mode=passive?
+try `parity ui --warp --mode=passive` what is --mode=passive? https://github.com/paritytech/parity/issues/1244
 
 pruning? https://ethereum.stackexchange.com/questions/3332/what-is-the-parity-light-pruning-mode/4327
 
@@ -76,3 +76,7 @@ https://github.com/paritytech/parity/wiki/FAQ:-Backup,-Restore,-and-Files
 
 how to use parity, interact with from consoles
 https://github.com/paritytech/parity/wiki/Basic-Usage#javascript-console Applicants > Console
+
+1. Save the "snapshots" via parity ui --warp --mode=passive
+2. try getting my balance / importing latest block / getting EOS contract
+3. Need import private key? Can do from web3.js or JSON-RPC Client
