@@ -16,11 +16,17 @@ https://github.com/ethereum/wiki/wiki
 Ethereum is in ~/Library/Ethereum (Mac OS) and the blockchain is in ~/Library/Ethereum/geth/chaindata    
 Private Keys are in ~/Library/Ethereum/keystore (Linux/Windows)[https://github.com/ethereum/go-ethereum/wiki/Backup-&-restore]  
 **geth** - Go Implementation of an API to the thereum node. Runs the Ethereum node for you.  
+`geth attach` to start a console connected to your geth that's in the other bash window
+list accounts... https://github.com/ethereum/go-ethereum/wiki/Managing-your-accounts  
+`geth account list` or `> eth.accounts`
 **Version 1.7.3-stable** (02/14/18), previous versions may use the --fast command which has since been deprecated  
 https://github.com/ethereum/go-ethereum/wiki
 https://github.com/ethereum/go-ethereum/wiki/geth  
-**web3** - Javascript client lib for connecting to your ethereum node. Makes use of solc    https://github.com/ethereum/web3.js/  
-**node npm** - for running a node script that uses *web3* to connect to *geth*, and for talking to the crypto exchanges too.   
+**web3** - Javascript client lib for connecting to your ethereum node. Makes use of solc 
+**Version ^1.0.0-beta.30** (02/14/18) https://github.com/ethereum/web3.js/  
+[documentation .2x.x](https://github.com/ethereum/wiki/wiki/JavaScript-API)
+[documentation 1.0](http://web3js.readthedocs.io/en/1.0/index.html)
+**Node and NPM** - for running a node script that uses *web3* to connect to *geth*, and for talking to the crypto exchanges too.   
 **solc** - module that compiles contracts for you. Solidity compiler for compiling smart contracts. We won't be using it in this project but its good to know this. The EOS Smartcontract was already compiled by the EOS developers and deployed.
 
 ## GETTING STARTED
@@ -52,8 +58,15 @@ Geth is now running on port `localhost:8545` and our node script will communicat
 
 2. Import a Private Key (Ethereum Account) to Geth, one that already has Eth 
 In a new shell window (consider doing this before running Geth node. shouldn't hurt to do it afterwards though) 
-`geth account import ../<keyfile>` ../ because don't want your privateKey pasted within this project
-or create a new address/privateKey, (instructions)[https://github.com/ethereum/go-ethereum/wiki/Managing-your-accounts]
+`geth account import ~/path/to/<keyfile>` do not put in ./hash-tronic or ~/Library/Ethereum, for security  
+
+- Save the passphrase somewhere secure
+- Confirm the public address it gives you is same as the one your privateKey already corresponded to.
+- Open a geth console by typing `geth attach` and then `> eth.accounts` to make sure your account is there.
+- Check the balance using (geth command?, or insert a script *TODO*) 
+- See that a keystore file was created like `~/Library/Ethereum/geth/keystore/UTC--2018-02-15T01-52-15.596264000Z--7d0a72767347332be638a0b9f3d751601ac03c8f  
+You can also create a new address/privateKey, [instructions](https://github.com/ethereum/go-ethereum/wiki/Managing-your-accounts)
+
 
 3. Run the node script using npm start
 Web3 config makes JRC-20 protocool requests to the node your started on `localhost:8545`. This address:port is specified in the index.js file during web3 instance configuration.

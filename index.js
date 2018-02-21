@@ -1,16 +1,20 @@
+const ethNodeProviders = require('./eth-node-providers')
+const gethLocal = ethNodeProviders.gethLocal
+const myEtherWallet = ethNodeProviders.myEtherWallet
+console.log('ethNodeProviders\n',ethNodeProviders)
+return
 // RUN A GETH NODE USING
 // geth --syncmode "fast" --cache 2048 --rpc
 const Web3 = require('web3')
 let web3
-// web3 = new Web3(web3.currentProvider);
-web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-// if (typeof web3 !== 'undefined') {
-//     web3 = new Web3(web3.currentProvider);
-// } else {
-//     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-// }
+if (typeof web3 !== 'undefined') {
+    web3 = new Web3(web3.currentProvider);
+} else {
+    web3 = new Web3(new Web3.providers.HttpProvider(gethLocal));
+    web3.setProvider(new web3.providers.HttpProvider(myEtherWallet));
+}
 
-console.log('\n======== web3.eth =======\n', web3.eth.Contract) // .accounts []
+// console.log('\n======== web3.eth =======\n', web3.eth.Contract) // web3.accounts [...]
 
 //*TODO* - need add an account to GETH. see if can access it as web3.eth.accounts[0] 11:59a
 
@@ -21,20 +25,54 @@ console.log('\n======== web3.eth =======\n', web3.eth.Contract) // .accounts []
 // Or must do that from geth commandline first?
 // Try sending to my own address, from commandLine, first. or doesnt matter, because should ahve txId, will see it or WONT see it under EOS Contract Address Activity
 // unlock account, may need to use Truffle   
-web3.eth.defaultAccount = web3.eth.accounts[0]; // test accounts, ganache. or real.
 
-// function checkAllBalances() {
-//     const eth = web3.eth
-//     var totalBal = 0;
-//     for (var acctNum in eth.accounts) {
-//         var acct = eth.accounts[acctNum];
-//         var acctBal = web3.fromWei(eth.getBalance(acct), "ether");
-//         totalBal += parseFloat(acctBal);
-//         console.log("  eth.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " ether");
-//     }
-//     console.log("  Total balance: " + totalBal + " ether");
-// };
-// checkAllBalances()
+web3.eth.getAccounts(function (error, res) {
+    const accounts = res
+    const myAccount = res[0].toString()
+    console.log('===== Account is ======', myAccount) // undefined *TODO*
+    
+    // *TODO* use somewhere...claimAll...
+    //web3.eth.defaultAccount = web3.eth.accounts[0]; // test accounts, ganache. or real.
+
+    // *TODO* need Unlock?
+    // tried > personal.unlockAccount("0x7602acd0a747332ce638a0b9f6d7532767303c8f") 
+
+    // var balance = web3.eth.getBalance(myAccount); // returns Promise...
+    // console.log('\n====== balance ====\n', balance)
+
+    // > eth.syncing to know if geth is done syncing https://ethereum.stackexchange.com/questions/16333/how-can-i-tell-if-geth-is-done-running
+    // should say 'imported chain segment' when complete https://www.reddit.com/r/EtherMining/comments/6dxaci/how_do_you_tell_when_geth_has_finished/
+    // sync as a service... bash. https://medium.com/@jacksonngtech/syncing-geth-to-the-ethereum-blockchain-9571666f3cfc
+    // not possible? https://github.com/ethereum/go-ethereum/issues/14338
+    // asks "WHen is it ever done syncing?" https://bitcointalk.org/index.php?topic=1861097.0 and https://github.com/ethereum/go-ethereum/issues/2936
+    // > eth.getBlock("latest")
+
+    web3.eth.getBalance(myAccount, function (err, res) { // highestBlock vs currentBlock https://stackoverflow.com/questions/47161038/web3-js-getbalance-always-showing-0
+        if (err) console.log('err', err)
+        console.log('====== getBalance result ====', res) // 0
+    })
+
+    // says im not synced up yet https://ethereum.stackexchange.com/questions/511/why-is-geth-always-returning-a-0-balance
+
+    // function checkAllBalances() {
+    //     const eth = web3.eth
+    //     var totalBal = 0;
+    //     for (var acctNum in accounts) {
+    //         var acct = accounts[acctNum];
+    //         var acctBal = web3.fromWei(eth.getBalance(acct), "ether"); // cant read fromWei, error
+    //         totalBal += parseFloat(acctBal);
+    //         console.log("  accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " ether");
+    //     }
+    //     console.log("  Total balance: " + totalBal + " ether");
+    // };
+    // checkAllBalances()
+    
+    // return web3.eth.getBalance(res[0], 5092367)
+})
+    // .then((result) => {
+    //     console.log('====== balance =======', result); // logs the account address again...
+    // })
+
 
 // SEND ETHER TO EOS CROWDSALE CONTRACT ADDRESS
 // w/ gas limit <= 90000. from web3.eth.account wallet?
