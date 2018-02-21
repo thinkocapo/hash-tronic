@@ -71,3 +71,25 @@ You can also create a new address/privateKey, [instructions](https://github.com/
 3. Run the node script using npm start
 Web3 config makes JRC-20 protocool requests to the node your started on `localhost:8545`. This address:port is specified in the index.js file during web3 instance configuration.
 
+### Parity
+`parity ui` - starts the UI in `http://127.0.0.1:8180` /#/?token=0tzv-OvXt-WGFZ-CBKh
+^^ starts regular sync which we don't want...
+
+Delete parity db blockchain
+`parity db kill`
+
+`parity --warp` Warp Synchronization - https://github.com/paritytech/parity/wiki/Getting-Synced
+
+try `parity ui --warp --mode=passive` what is --mode=passive? https://github.com/paritytech/parity/issues/1244
+
+pruning? https://ethereum.stackexchange.com/questions/3332/what-is-the-parity-light-pruning-mode/4327
+
+warps, and then resumes regulat syncing? not what I want...
+https://github.com/paritytech/parity/wiki/FAQ:-Backup,-Restore,-and-Files
+
+how to use parity, interact with from consoles
+https://github.com/paritytech/parity/wiki/Basic-Usage#javascript-console Applicants > Console
+
+1. Save the "snapshots" via parity ui --warp --mode=passive
+2. try getting my balance / importing latest block / getting EOS contract
+3. Need import private key? Can do from web3.js or JSON-RPC Client
