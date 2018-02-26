@@ -1,23 +1,21 @@
-const ethNodeProviders = require('./eth-node-providers')
-const gethLocal = ethNodeProviders.gethLocal
-const myEtherWallet = ethNodeProviders.myEtherWallet
-const chicagoGeth = ethNodeProviders.chicagoGeth
+const ethNodes = require('./eth-nodes')
+const web3Scripts = require('./web3-scripts')
 
+// WEB3 CONFIG
 const Web3 = require('web3')
 let web3
 if (typeof web3 !== 'undefined') {
     web3 = new Web3(web3.currentProvider);
 } else {
-    // web3 = new Web3(new Web3.providers.HttpProvider(gethLocal));
-    console.log('chi town', chicagoGeth)
-    web3 = new Web3(new Web3.providers.HttpProvider(chicagoGeth))
-    // web3.setProvider(new web3.providers.HttpProvider(myEtherWallet)); // https://www.myetherapi.com/
+    console.log('chi town', lincolnPark)
+    web3 = new Web3(new Web3.providers.HttpProvider(ethNodes.lincolnPark))
 }
 
-const web3Scripts = require('./web3-scripts')
-// console.log('\filterWatches', web3Scripts.filterWatches)
-// console.log('process.argv[1]', process.argv[1])
-// await web3Scripts[process.argv[1]](web3)
-const sendRawTxTest = web3Scripts.sendRawTxTest
-const filterWatches = web3Scripts.filterWatches // getBlock(5000000)...
-filterWatches(web3)
+// Run script that was passed as commandLine parameter
+const scriptName = process.argv[2]
+web3Scripts[scriptName](web3)
+
+
+// NOTES and alternative code
+// web3 = new Web3(new Web3.providers.HttpProvider(gethLocal));
+// web3.setProvider(new web3.providers.HttpProvider(myEtherWallet)); // https://www.myetherapi.com/

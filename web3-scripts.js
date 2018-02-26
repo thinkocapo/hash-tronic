@@ -1,7 +1,26 @@
 module.exports = {
+  getBalance: async function (web3) {
+    // erroing i think...try promise-chain.
+    web3.eth.getBalance("0x7cB57B5A97eAbe94205C07890BE4c1aD31E486A8").toString();
+  },
+  getBlock: async function (web3) {
+
+    return web3.eth.getBlock(5000000)
+      .then((err, res) => { // err
+        console.log('\n ======= err =====\n', err);
+        console.log('\n ======= res =====\n', res);
+        return
+      })
+
+    // ERROR also won't run... Error: Invalid JSON RPC response: "<!DOCTYPE HTML PUBLIC \"-//W3C//D
+    // web3.eth.getBlock(48, function(error, result){
+    //   if(!error)
+    //       console.log(JSON.stringify(result));
+    //   else
+    //       console.error(error);
+    // })
+  },
   sendRawTxTest: async function (web3) {
-
-
     /**
      * let transaction = { 'to': '0xF0109fC8DF283027b6285cc889F5aA624EaC1F55',
         'value': 1000000000,
@@ -15,32 +34,8 @@ module.exports = {
      */
   },
   filterWatches: async function (web3) {
-    
-    // erroing i think...try promise-chain.
-    //web3.eth.getBalance("0x7cB57B5A97eAbe94205C07890BE4c1aD31E486A8").toString();
-
-
-    // https://github.com/trufflesuite/truffle/issues/492 // Unhandled rejection Error: Invalid JSON RPC response: ""
-
-    // 1 confirm its on 8545
-    // 2 confirm this url:port is good 'http://65.79.136.27:8545'
-    // 3 pass --rpc flag
-    // 4 see if was any activity from 2:45a - 3:15a EST 02/26/18
-
-    web3.eth.getBlock(5000000)
-      .then((err, res) => { // err
-        console.log('\n ======= err =====\n', err);
-        console.log('\n ======= res =====\n', res);
-      })
-
-    // ERROR also won't run... Error: Invalid JSON RPC response: "<!DOCTYPE HTML PUBLIC \"-//W3C//D
-    // web3.eth.getBlock(48, function(error, result){
-    //   if(!error)
-    //       console.log(JSON.stringify(result));
-    //   else
-    //       console.error(error);
-    // })
-
+    console.log('filterWatches....')
+  
     // ERROR web3.eth.filter is not a function... isn't there an newer syntax if you check the wiki doc?
     // var filter = web3.eth.filter('pending'); // .Filter
     // var filter = web3.eth.subscribe('pendingTransactions', function (err, res) {
@@ -56,8 +51,8 @@ module.exports = {
     //   }
     // });
   
-      //Result
-      //checkout latest transactions below, it might take a second to load as it is waiting for incoming txs
+    //Result...
+    //checkout latest transactions below, it might take a second to load as it is waiting for incoming txs
   },
   myFunc () {}
 }
