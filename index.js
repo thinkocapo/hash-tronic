@@ -1,3 +1,4 @@
+require('dotenv').config()
 const ethNodes = require('./eth-nodes')
 const web3Scripts = require('./web3-scripts')
 
@@ -7,7 +8,6 @@ let web3
 if (typeof web3 !== 'undefined') {
     web3 = new Web3(web3.currentProvider);
 } else {
-    console.log('chi town', lincolnPark)
     web3 = new Web3(new Web3.providers.HttpProvider(ethNodes.lincolnPark))
 }
 
