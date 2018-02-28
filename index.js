@@ -8,10 +8,11 @@ let web3
 if (typeof web3 !== 'undefined') {
     web3 = new Web3(web3.currentProvider);
 } else {
-    web3 = new Web3(new Web3.providers.HttpProvider(ethNodes.lincolnPark))
+    web3 = new Web3(new Web3.providers.HttpProvider(ethNodes.myEtherWallet))
 }
 
 // Run script that was passed as commandLine parameter
+if (!process.argv[2]) throw 'Must pass name of script as argument'
 const scriptName = process.argv[2]
 web3Scripts[scriptName](web3)
 

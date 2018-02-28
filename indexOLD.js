@@ -100,6 +100,10 @@ const eosContractInstance = new web3.eth.Contract(eosContractABI, eosContractAdd
 console.log('\n === eosContractInstance.methods.claimAll === \n', eosContractInstance.methods.claimAll); // 'function () { [native code] }'
 return
 
+// Send Ether to eosContractAddress
+
+// wait for 24hr period to end...
+
 // GET TOKENS
 // Amount to Send: 0, GasLimit: 90000
 // Invoke 'claimAll' off of web3.getContract(eos).claimAll [pseudocode] or see EOS obj I made 5:16p:
