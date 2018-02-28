@@ -93,3 +93,24 @@ https://github.com/paritytech/parity/wiki/Basic-Usage#javascript-console Applica
 1. Save the "snapshots" via parity ui --warp --mode=passive
 2. try getting my balance / importing latest block / getting EOS contract
 3. Need import private key? Can do from web3.js or JSON-RPC Client
+
+#### Sending Transaction vs Raw Transaction
+**Raw Transaction** - you sign the tx object using a privateKey, before sending to the geth node. tx.sign web3.eth.sendRawTransaction
+A raw transaction is a transaction in raw bytes.
+If one has the raw bytes of a valid transaction, they can use sendRawTransaction.
+
+Raw bytes are required if you are using a platform like infura.io which does not handle private keys but deal only with signed transactions.
+
+https://ethereum.stackexchange.com/questions/6905/difference-between-transactions-and-raw-transactions-in-web3-js
+Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
+https://ethereum.stackexchange.com/questions/18928/what-is-a-raw-transaction-and-what-is-it-used-for
+
+**Transaction ** - web3.accounts[0] - you already unlocked the account at that node, the node can handle privateKeys.
+Otherwise, web3.js creates the signed transaction's bytes for you automatically as part of sendTransaction().
+
+another way - https://github.com/ethereum/go-ethereum/wiki/Sending-ether
+
+
+
+
+ 
