@@ -23,7 +23,7 @@ var createByteCodeForContract = function (contract) {
   return bytcode
 }
 
-var createTransactionObject = function (eosContractAddress) {
+var createTxObject = function (eosContractAddress, value) {
   const bytcode = null // bytcode of compiled contract https://ethereum.stackexchange.com/questions/25839/how-to-make-transactions-using-private-key-in-web3
   const rawTx = {
     nonce: "", // GOOD try eth.getTransactionCount(<account>) // https://github.com/trufflesuite/ganache-cli/issues/344 
@@ -53,7 +53,7 @@ var createTransactionObject = function (eosContractAddress) {
 // chainId: 1, - might be a default, EIP 155 chainId - mainnet: 1, ropsten: 3
 // gas: feeCost, - seems like mostly gasLimit and gasPrice
 
-var signTransactionWithPrivateKey = function (tx, pKey) {
+var signTxByPrivateKey = function (tx, pKey) {
   //var feeCost = tx.getUpfrontCost()
   //console.log('feeCost', feeCost.toString())   // ?
   const privateKey = Buffer.from(pKey, 'hex') // toString()
@@ -67,10 +67,10 @@ module.exports = {
   
   // STEP 1 CREATE TRANSACTION FOR SENDING ETHER FROM ACCOUNT ADDRESS TO EOS CONTRACT ADDRESS
   sendEth2EosContract: async function (web3) {
-    const tx = createTransactionObject(eosContractAddress)
-    const serializedTx = signTransactionWithPrivateKey(tx, process.env.PK) // makes it so funds are coming from the account address for that private key?
+    const tx = createTxObject(eosContractAddress, 10000000)
+    const txSerialized = signTransactionByPrivateKey(tx, process.env.PK) // makes it so funds are coming from the account address for that private key?
     
-    return web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, hash) { if (!err) {
+    return web3.eth.sendRawTransaction('0x' + txSerialized.toString('hex'), function(err, hash) { if (!err) {
         console.log('hash', hash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
       } else { console.log(' err sendRawTransaction \n', err)}
     });
