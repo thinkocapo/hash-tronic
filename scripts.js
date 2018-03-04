@@ -24,31 +24,29 @@ var createByteCodeForContract = function (contract) {
 }
 
 var createTxObject = function (eosContractAddress, value) {
-  const bytcode = null // bytcode of compiled contract https://ethereum.stackexchange.com/questions/25839/how-to-make-transactions-using-private-key-in-web3
-  const rawTx = {
-    nonce: eth.getTransactionCount(process.env.address), // getTransactionCountAsync
-    data: createByteCodeForContract('eos_sale.sol'),
-    // maybe this is only for smart contract deployment??
-    //TRY? - need generate bytcode of the contract (or method?) i think EOS Contract '0x7f7465737432000000000000000000000000000000000000000000000000000000600057', // get the bytcode https://gist.github.com/tomconte/4edb83cf505f1e7faf172b9252fff9bf is the contract bytcode?? A. var bytecode = Bytecode of compiled contract https://ethereum.stackexchange.com/questions/25839/how-to-make-transactions-using-private-key-in-web3
-    // ^^ says try Remix browser, but still, how many contracts? // https://ethereum.stackexchange.com/questions/27096/how-do-i-get-bytecode-of-the-contract-to-deploy
-    // also, tries contract data like this:
-    // Get contract data
-    // const contractData = contract.new.getData({
-    //   data: '0x' + bytecode
-    // });
+  const gasLimitHex = web3.toHex(300000);
+  console.log('gasLimitHex', gasLimitHex)
 
-    // how to find current gas price
-    // const gasPrice = web3.eth.gasPrice; // price is in GWEI ?
-    // const gasPriceHex = web3.toHex(gasPrice);
-    // const gasLimitHex = web3.toHex(300000);
-    gasPrice: '0x09184e72a000', // TRY gasPriceHex 100  price is in GWEI ?
-    gasLimit: '0x2710', // TRY gasLimitHex         1000 https://ethereum.stackexchange.com/questions/25839/how-to-make-transactions-using-private-key-in-web3
+  const rawTx = {
+    nonce: web3.eth.getTransactionCount(process.env.address), // getTransactionCountAsync
+
+    gasPrice : web3.eth.gasPrice(), //  need hex value
+    // gasPrice: web3.eth.gasPrice(function (err, result) {
+    //   console.log('result', result) // gwei
+    //   const gasPriceHex = web3.toHex(result); // 0x09184e72a000
+    // }),
+    // The gas price is determined by the x latest blocks median gas price.
+    
+    gasLimit: '0x2710',
+    
+    gas: null, // - based on the data/bytcode size https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendrawtransaction
     
     to: eosContractAddress,
     value: '0x00', // GOOD try web3.toHex(web3.toWei(value, "ether")); - value comes from process.argv[] vs geth console might allow amount = web3.toWei(0.01, "ether")
-    gas: null // - based on the data/bytcode size https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendrawtransaction
     // https://www.reddit.com/r/ethdev/comments/71rhzs/05_eth_bounty_help_needed_for_sending_raw/
   }
+
+  console.log('\n rawTx \n', rawTx)
   return new TX(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
 }
 // chainId: 1, - might be a default, EIP 155 chainId - mainnet: 1, ropsten: 3
@@ -69,8 +67,10 @@ module.exports = {
   // STEP 1 CREATE TRANSACTION FOR SENDING ETHER FROM ACCOUNT ADDRESS TO EOS CONTRACT ADDRESS
   sendEth2EosContract: async function (web3) {
     const tx = createTxObject(eosContractAddress, 10000000)
+    console.log('\n TX \n', tx)
     const txSerialized = signTransactionByPrivateKey(tx, process.env.PK) // makes it so funds are coming from the account address for that private key?
     
+    return
     return web3.eth.sendRawTransaction('0x' + txSerialized.toString('hex'), function(err, hash) { if (!err) {
         console.log('hash', hash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
       } else { console.log(' err sendRawTransaction \n', err)}
