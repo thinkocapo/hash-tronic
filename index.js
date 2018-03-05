@@ -2,20 +2,11 @@ require('dotenv').config()
 const ethNodes = require('./eth-nodes')
 const scripts = require('./scripts')
 const Web3 = require('web3')
-// node to connect to
-const node = ethNodes.myEtherWallet || ethNodes[process.argv[3]]
 
-// WEB3 CONFIG
-// if you don't pass httpProvider then it will not be connected to a geth instance
-let web3Class = new Web3()
-let web3 = new Web3(web3Class.providers.HttpProviders(node))
-
-// Original
-// if (typeof web3 !== 'undefined') {
-//     web3 = new Web3(web3.currentProvider);
-// } else {
-//     web3 = new Web3(new Web3.providers.HttpProvider(ethNodes.myEtherWallet))
-// }
+// WEB3 CONFIG - Web3 1.0 Docs http://web3js.readthedocs.io/en/1.0/index.html // don't confuse with v0.2's which is what most search results give yo
+// Ether node for our web3 to connect to
+const node = ethNodes[process.argv[3]] || ethNodes.myEtherWallet
+let web3 = new Web3(new Web3.providers.HttpProvider(node))
 
 // Run script that was passed as commandLine parameter
 if (!process.argv[2]) throw 'Must pass name of script as argument'
