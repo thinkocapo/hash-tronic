@@ -6,13 +6,15 @@ const Web3 = require('web3')
 // https://github.com/SilentCicero/ethereumjs-accounts
 // sendTransaction vs sendRawTransaction , estimateGas()
 
+// ethstats.net for gasprice ratio eth/gas
+// eth3r.co for turning pKey into address
 /**
  * Raw Tx from MEW at 1:19a on 03/05/18
  * Most values are hex's of the actual value
  * 
  * {"nonce":"0x10", // # historical transactions by sender address
  * "gasPrice":"0x04e3b29200", // determined by the x latest blocks median gas price. 20gwei or 20000000000 // recently 9 000 000 000
- * "gasLimit":"0x5208", // # formerly 21000 on MEW or 300000 here
+ * "gasLimit":"0x5208", // # formerly 21000 to send on MEW or 300000 here // "amount of gas you pay is fixed, but the quantity of ethere it costs for that is not fixed (it varies)"
  * "to":"0x1eec5a83f78d3952fe86747034a7514f2dc9925c", // address of recipient
  * "value":"0x2386f26fc10000", // wei web3.toHex(web3.toWei(value,'ether'))
  * "data":"", // only for deploying smart contract
@@ -26,7 +28,7 @@ const gasLimit = 21000
 let webThree = new Web3
 
 module.exports = {
-  
+
   sendEth2EosContract: async function (web3, value) {
     return createRawTx(eosContractAddress, value, web3)
       .then(txInstance => {
@@ -82,15 +84,14 @@ var createRawTx = function (eosContractAddress, value, web3) {
       const rawTx = {
         nonce: hex(txCount),
         gasPrice : hex(gasPrice), 
-        gasLimit: hex(300000),
+        gasLimit: hex(gasLimit),
         to: eosContractAddress,
         value: hex(web3.utils.toWei(value.toString(),'ether')), // *TODO* hard-code the Wei the first time // make sure toString works here
         "data":"",
         "chainId": chain
       }
       console.log('\nrawTx\n', rawTx)
-      const tx = new EthTx(rawTx)
-      // console.log('\ntx\n', tx)      
+      const tx = new EthTx(rawTx) // console.log('\ntx\n', tx) 
       return tx // // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
     })
 }
