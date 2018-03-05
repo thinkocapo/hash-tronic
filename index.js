@@ -11,7 +11,7 @@ let web3 = new Web3(new Web3.providers.HttpProvider(node))
 // Run script that was passed as commandLine parameter
 if (!process.argv[2]) throw 'Must pass name of script as argument'
 const scriptName = process.argv[2]
-scripts[scriptName](web3, 10000000) // process.argv[3])
+scripts[scriptName](web3, 0.003) // process.argv[3])
 
 
 // NOTES and alternative code
