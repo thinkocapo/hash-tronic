@@ -8,6 +8,8 @@ const Web3 = require('web3')
 
 // ethstats.net for gasprice ratio eth/gas
 // eth3r.co for turning pKey into address
+// etherutils
+// ethereumjs/keythereum
 /**
  * Raw Tx from MEW at 1:19a on 03/05/18
  * Most values are hex's of the actual value
