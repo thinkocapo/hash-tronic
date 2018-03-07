@@ -18,7 +18,7 @@ const Web3 = require('web3')
  * "gasPrice":"0x04e3b29200", // 21000 ? etermined by the x latest blocks median gas price. 20gwei or 20000000000 // recently 9 000 000 000
  * "gasLimit":"0x5208", // # formerly 21000 to send on MEW or 300000 here // "amount of gas you pay is fixed, but the quantity of ethere it costs for that is not fixed (it varies)" // wont necessarily use all of this limit? e.g. if set a super high limit...
  * "to":"0x1eec5a83f78d3952fe86747034a7514f2dc9925c", // address of recipient
- * "value":"0x2386f26fc10000", // wei web3.toHex(web3.toWei(value,'ether'))
+ * "value":"0x2386f26fc10000", // eventually // eventually hex(web3.utils.toWei(value.toString(),'ether'))
  * "data":"", // only for deploying smart contract
  * "chainId":1}
  */
@@ -40,6 +40,8 @@ module.exports = {
         const txSignedSerializedHex = txSignedSerialized.toString('hex')
         // console.log('======= txSignedSerializedHx =======', tx)
         return
+        
+        // *TODO* send to a Account Address not a Contract Address
         return web3.eth.sendRawTransaction(`0x${txSignedSerializedHex}`, function(err, txHash) { 
           if (!err) {
             console.log('==== transaction hash ==== \n', JSON.stringify(txHash,null,4)); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
@@ -80,20 +82,21 @@ var createRawTx = function (eosContractAddress, value, web3) {
     .then(block => {
       gasLimit = block.gasLimit
 
+      const recipient = process.env.testWallet
+      
       // Calculate the ether we want to send, into wei
       const wei = logWeiAmountBeingSent(value, web3)
-      
       const rawTx = {
         nonce: hex(txCount),
         gasPrice : hex(gasPrice), 
         gasLimit: hex(gasLimit),
-        to: eosContractAddress,
-        value: hex(wei), // eventually use 'value' by hex(web3.utils.toWei(value.toString(),'ether'))
-        chainId: chain,
-        data:""
+        to: recipient, // for testing send to Account Address, for prod send to Contract Address:eosContractAddress,
+        value: hex(wei),
+        chainId: chain
+        // data:""
       }
-
-      logRawTxInputsAndHexes({nonce: txCount,gasPrice,gasLimit, to: eosContractAddress,value,chain, data: ""}, rawTx)
+      
+      logRawTxInputsAndHexes({nonce: txCount,gasPrice,gasLimit, to: recipient,value,chain, data: ""}, rawTx)
 
       return new EthTx(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
     })
