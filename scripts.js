@@ -103,11 +103,13 @@ var createRawTx = function (eosContractAddress, value, web3) {
       const wei = logWeiAmountBeingSent(value, web3)
       const rawTx = {
         nonce: hex(txCount),
-        gasPrice : hex(gasPrice), 
-        gasLimit: hex(gasLimit),
+        gas: web3.utils.toHex("21000"),
+        gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+        // gasPrice : hex(gasPrice), 
+        // gasLimit: hex(gasLimit),
         to: recipient, // for testing send to Account Address, for prod send to Contract Address:eosContractAddress,
-        value: hex(wei),
-        chainId: chain
+        value: hex(wei)
+        // chainId: chain
         // data:""
       }
       
