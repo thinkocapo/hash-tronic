@@ -93,7 +93,7 @@ var createRawTx = function (eosContractAddress, value, web3) {
         data:""
       }
 
-      logRawTxInputsAndHexes({txCount,gasPrice,gasLimit,eosContractAddress,value,chain}, rawTx)
+      logRawTxInputsAndHexes({nonce: txCount,gasPrice,gasLimit, to: eosContractAddress,value,chain, data: ""}, rawTx)
 
       return new EthTx(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
     })
