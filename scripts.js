@@ -15,8 +15,8 @@ const Web3 = require('web3')
  * Most values are hex's of the actual value
  * 
  * {"nonce":"0x10", // # historical transactions by sender address
- * "gasPrice":"0x04e3b29200", // determined by the x latest blocks median gas price. 20gwei or 20000000000 // recently 9 000 000 000
- * "gasLimit":"0x5208", // # formerly 21000 to send on MEW or 300000 here // "amount of gas you pay is fixed, but the quantity of ethere it costs for that is not fixed (it varies)"
+ * "gasPrice":"0x04e3b29200", // 21000 ? etermined by the x latest blocks median gas price. 20gwei or 20000000000 // recently 9 000 000 000
+ * "gasLimit":"0x5208", // # formerly 21000 to send on MEW or 300000 here // "amount of gas you pay is fixed, but the quantity of ethere it costs for that is not fixed (it varies)" // wont necessarily use all of this limit? e.g. if set a super high limit...
  * "to":"0x1eec5a83f78d3952fe86747034a7514f2dc9925c", // address of recipient
  * "value":"0x2386f26fc10000", // wei web3.toHex(web3.toWei(value,'ether'))
  * "data":"", // only for deploying smart contract
@@ -37,9 +37,9 @@ module.exports = {
         const tx = txInstance
         console.log('======= tx =======', tx)
         const txSignedSerialized = createSignedSerializedTx(tx, privateKey)
-        console.log('======= txSignedSerialized =======', tx)
+        // console.log('======= txSignedSerialized =======', tx)
         const txSignedSerializedHex = txSignedSerialized.toString('hex')
-        console.log('======= txSignedSerializedHx =======', tx)
+        // console.log('======= txSignedSerializedHx =======', tx)
         return
         return web3.eth.sendRawTransaction(`0x${txSignedSerializedHex}`, function(err, txHash) { if (!err) {
             console.log('==== transaction hash ==== ', txHash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
@@ -66,7 +66,17 @@ var createRawTx = function (eosContractAddress, value, web3) {
   // *Implement* Promise.All
   return web3.eth.getGasPrice()
     .then(result => { 
-      gasPrice = result
+      gasPrice = result // 20000000000
+      
+      const s1 = gasPrice * 21000
+      const totalEther = web3.utils.fromWei(s1.toString(), "ether")
+      console.log('totalEther         ', totalEther)
+
+      s2 = 20
+      s3 = web3.utils.toWei(s2.toString(), "gwei") * 21000
+      const totalEtherFromVideo = web3.utils.fromWei(s3.toString(), "ether")
+      console.log('totalEtherFromVideo', totalEtherFromVideo)
+
       return web3.eth.getTransactionCount(process.env.address) // getTransactionCountAsync
     })
     .then(result => {
@@ -75,10 +85,11 @@ var createRawTx = function (eosContractAddress, value, web3) {
     })
     .then(block => {
       gasLimit = block.gasLimit
+
       const weiCalculated = web3.utils.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei
-      console.log(weiCalculated)
+      console.log('weiCalculated', weiCalculated)
       const weiEtherConverter = 3000000000000000 // https://etherconverter.online/
-      console.log(weiEtherConverter)
+      console.log('weiEtherConverter', weiEtherConverter)
       
       const rawTx = {
         nonce: hex(txCount),
@@ -89,11 +100,10 @@ var createRawTx = function (eosContractAddress, value, web3) {
         chainId: chain,
         data:""
       }
-      logRawTxInputs({txCount,gasPrice,gasLimit,eosContractAddress,value,chain})
-      console.log('====== Raw Transaction =======\n', rawTx)
 
-      const tx = new EthTx(rawTx)
-      return tx // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
+      logRawTxInputsAndHexes({txCount,gasPrice,gasLimit,eosContractAddress,value,chain}, rawTx)
+
+      return new EthTx(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
     })
 }
 
@@ -111,4 +121,7 @@ var hex = function (gasPrice) {
 // TODO - make a single method that will first check if their are new EOS tokens to claim, and then run claimAll and exchange workflow
 // and if no new EOS token available, then send eth to EOS Crowdsale
 
-var logRawTxInputs = function (params) {console.log('===== Raw Transaction Inputs =====\n', params)}
+var logRawTxInputsAndHexes = function (inputs, rawTx) {
+  console.log('===== Raw Transaction Inputs =====\n', inputs)
+  console.log('===== Raw Transaction        =======\n', rawTx)
+}
