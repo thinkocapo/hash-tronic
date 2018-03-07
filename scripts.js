@@ -34,11 +34,11 @@ module.exports = {
     return createRawTx(eosContractAddress, value, web3)
       .then(txInstance => {
         const tx = txInstance
-        // console.log('======= tx =======', tx)
+        console.log('======= tx =======', tx)
         const txSignedSerialized = createSignedSerializedTx(tx, privateKey)
-        // console.log('======= txSignedSerialized =======', tx)
+        console.log('======= txSignedSerialized =======', txSignedSerialized)
         const txSignedSerializedHex = txSignedSerialized.toString('hex')
-        // console.log('======= txSignedSerializedHx =======', tx)
+        console.log('======= txSignedSerializedHx =======', txSignedSerializedHex)
         return
         
         // *TODO* send to a Account Address not a Contract Address
@@ -104,6 +104,10 @@ var createRawTx = function (eosContractAddress, value, web3) {
 
 var createSignedSerializedTx = function (tx, pKey) {
   const privateKeyX = Buffer.from(pKey, 'hex') // toString() // new Buffer(pKey, 'hex')
+  
+  // *TODO*
+  //console.log('from: AccountAddress (produce from web3. privateKey):', process.env.address)
+  
   tx.sign(privateKeyX)
   const txSerialized = tx.serialize()
   //console.log('txSerialized\n', txSerialized) // <Buffer f8 89 80 86 09 18 4e 7 ... >
