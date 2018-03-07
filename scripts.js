@@ -35,7 +35,7 @@ module.exports = {
     return createRawTx(eosContractAddress, value, web3)
       .then(txInstance => {
         const tx = txInstance
-        console.log('======= tx =======', tx)
+        // console.log('======= tx =======', tx)
         const txSignedSerialized = createSignedSerializedTx(tx, privateKey)
         // console.log('======= txSignedSerialized =======', tx)
         const txSignedSerializedHex = txSignedSerialized.toString('hex')
@@ -63,19 +63,13 @@ module.exports = {
 var createRawTx = function (eosContractAddress, value, web3) {
   // Make web3 calls to get data for Raw Transaction object tx
   let gasPrice, txCount, gasLimit;
-  // *Implement* Promise.All
+  
+  // *TODO* Implement Promise.All
+
   return web3.eth.getGasPrice()
     .then(result => { 
-      gasPrice = result // 20000000000
-      
-      const s1 = gasPrice * 21000
-      const totalEther = web3.utils.fromWei(s1.toString(), "ether")
-      console.log('totalEther         ', totalEther)
-
-      s2 = 20
-      s3 = web3.utils.toWei(s2.toString(), "gwei") * 21000
-      const totalEtherFromVideo = web3.utils.fromWei(s3.toString(), "ether")
-      console.log('totalEtherFromVideo', totalEtherFromVideo)
+      gasPrice = result // 20000000000      
+      logGasPriceInEther(gasPrice, web3)
 
       return web3.eth.getTransactionCount(process.env.address) // getTransactionCountAsync
     })
@@ -86,10 +80,8 @@ var createRawTx = function (eosContractAddress, value, web3) {
     .then(block => {
       gasLimit = block.gasLimit
 
-      const weiCalculated = web3.utils.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei
-      console.log('weiCalculated', weiCalculated)
-      const weiEtherConverter = 3000000000000000 // https://etherconverter.online/
-      console.log('weiEtherConverter', weiEtherConverter)
+      // Calculate the ether we want to send, into wei
+      const wei = logWeiAmountBeingSent(value, web3)
       
       const rawTx = {
         nonce: hex(txCount),
@@ -120,6 +112,23 @@ var hex = function (gasPrice) {
 }
 // TODO - make a single method that will first check if their are new EOS tokens to claim, and then run claimAll and exchange workflow
 // and if no new EOS token available, then send eth to EOS Crowdsale
+
+var logWeiAmountBeingSent = function (value, web3) {
+  const weiCalculated = web3.utils.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei
+  console.log('weiCalculated', weiCalculated)
+  const weiEtherConverter = 3000000000000000 // https://etherconverter.online/ .003 ether is 3000000000000000 wei
+  console.log('weiEtherConverter', weiEtherConverter)
+  return weiCalculated
+}
+var logGasPriceInEther = function (gasPrice, web3) {
+  const s1 = gasPrice * 21000
+  const totalEther = web3.utils.fromWei(s1.toString(), "ether")
+  console.log('totalEther         ', totalEther)
+  s2 = 20
+  s3 = web3.utils.toWei(s2.toString(), "gwei") * 21000
+  const totalEtherFromVideo = web3.utils.fromWei(s3.toString(), "ether")
+  console.log('totalEtherFromVideo', totalEtherFromVideo)
+}
 
 var logRawTxInputsAndHexes = function (inputs, rawTx) {
   console.log('===== Raw Transaction Inputs =====\n', inputs)
