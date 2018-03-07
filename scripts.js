@@ -35,10 +35,13 @@ module.exports = {
     return createRawTx(eosContractAddress, value, web3)
       .then(txInstance => {
         const tx = txInstance
-        const txSerialized = createSerializedSignedTx(tx, privateKey)
-        const txSerializedHex = txSerialized.toString('hex')
+        console.log('======= tx =======', tx)
+        const txSignedSerialized = createSignedSerializedTx(tx, privateKey)
+        console.log('======= txSignedSerialized =======', tx)
+        const txSignedSerializedHex = txSignedSerialized.toString('hex')
+        console.log('======= txSignedSerializedHx =======', tx)
         return
-        return web3.eth.sendRawTransaction(`0x${txSerializedHex}`, function(err, txHash) { if (!err) {
+        return web3.eth.sendRawTransaction(`0x${txSignedSerializedHex}`, function(err, txHash) { if (!err) {
             console.log('==== transaction hash ==== ', txHash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
             // web3.eth.getTransaction(hash) to verify
           } else { console.log('err sendRawTransaction \n', err)}
@@ -60,6 +63,7 @@ module.exports = {
 var createRawTx = function (eosContractAddress, value, web3) {
   // Make web3 calls to get data for Raw Transaction object tx
   let gasPrice, txCount, gasLimit;
+  // *Implement* Promise.All
   return web3.eth.getGasPrice()
     .then(result => { 
       gasPrice = result
@@ -71,24 +75,29 @@ var createRawTx = function (eosContractAddress, value, web3) {
     })
     .then(block => {
       gasLimit = block.gasLimit
+      const weiCalculated = web3.utils.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei
+      console.log(weiCalculated)
+      const weiEtherConverter = 3000000000000000 // https://etherconverter.online/
+      console.log(weiEtherConverter)
       
-      logRawTxInputs({txCount,gasPrice,gasLimit,eosContractAddress,value,chain})
       const rawTx = {
         nonce: hex(txCount),
         gasPrice : hex(gasPrice), 
         gasLimit: hex(gasLimit),
         to: eosContractAddress,
-        value: hex(web3.utils.toWei(value.toString(),'ether')), // *TODO* hard-code the Wei the first time // make sure toString works here
-        "chainId": chain,
-        "data":""
+        value: hex(weiEtherConverter), // eventually use 'value' by hex(web3.utils.toWei(value.toString(),'ether'))
+        chainId: chain,
+        data:""
       }
+      logRawTxInputs({txCount,gasPrice,gasLimit,eosContractAddress,value,chain})
       console.log('====== Raw Transaction =======\n', rawTx)
-      const tx = new EthTx(rawTx) // console.log('\ntx\n', tx) 
-      return tx // // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
+
+      const tx = new EthTx(rawTx)
+      return tx // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
     })
 }
 
-var createSerializedSignedTx = function (tx, pKey) {
+var createSignedSerializedTx = function (tx, pKey) {
   const privateKeyX = Buffer.from(pKey, 'hex') // toString() // new Buffer(pKey, 'hex')
   tx.sign(privateKeyX)
   const txSerialized = tx.serialize()
