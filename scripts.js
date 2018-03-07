@@ -39,7 +39,7 @@ module.exports = {
         const txSerializedHex = txSerialized.toString('hex')
         return
         return web3.eth.sendRawTransaction(`0x${txSerializedHex}`, function(err, txHash) { if (!err) {
-            console.log('txHash', txHash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
+            console.log('==== transaction hash ==== ', txHash); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
             // web3.eth.getTransaction(hash) to verify
           } else { console.log('err sendRawTransaction \n', err)}
         });
@@ -48,7 +48,6 @@ module.exports = {
   
   claimEos: function (web3) {
     const eosContractInstance = new web3.eth.Contract(eosContractABI, eosContractAddress);
-    // console.log('\n === eosContractInstance.methods.claimAll === \n', eosContractInstance.methods); // 'function () { [native code] }'
   },
   sendEosToExchange: function () {
     // exchange api - send eos to exchange
@@ -72,27 +71,18 @@ var createRawTx = function (eosContractAddress, value, web3) {
     })
     .then(block => {
       gasLimit = block.gasLimit
-      console.log({
-        nonce: txCount,
-        gasPrice: gasPrice,
-        gasLimit: gasLimit,
-        to: eosContractAddress,
-        value: value,
-        "data":"",
-        "chainId": chain
-      })
       
-      console.log('value', value)
+      logRawTxInputs({txCount,gasPrice,gasLimit,eosContractAddress,value,chain})
       const rawTx = {
         nonce: hex(txCount),
         gasPrice : hex(gasPrice), 
         gasLimit: hex(gasLimit),
         to: eosContractAddress,
         value: hex(web3.utils.toWei(value.toString(),'ether')), // *TODO* hard-code the Wei the first time // make sure toString works here
-        "data":"",
-        "chainId": chain
+        "chainId": chain,
+        "data":""
       }
-      console.log('\nrawTx\n', rawTx)
+      console.log('====== Raw Transaction =======\n', rawTx)
       const tx = new EthTx(rawTx) // console.log('\ntx\n', tx) 
       return tx // // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
     })
@@ -102,12 +92,14 @@ var createSerializedSignedTx = function (tx, pKey) {
   const privateKeyX = Buffer.from(pKey, 'hex') // toString() // new Buffer(pKey, 'hex')
   tx.sign(privateKeyX)
   const txSerialized = tx.serialize()
-  console.log('txSerialized\n', txSerialized) // <Buffer f8 89 80 86 09 18 4e 7 ... >
+  //console.log('txSerialized\n', txSerialized) // <Buffer f8 89 80 86 09 18 4e 7 ... >
   return txSerialized
 }
 
 var hex = function (gasPrice) {
   return webThree.utils.toHex(gasPrice)
 }
-  // TODO - make a single method that will first check if their are new EOS tokens to claim, and then run claimAll and exchange workflow
-  // and if no new EOS token available, then send eth to EOS Crowdsale
+// TODO - make a single method that will first check if their are new EOS tokens to claim, and then run claimAll and exchange workflow
+// and if no new EOS token available, then send eth to EOS Crowdsale
+
+var logRawTxInputs = function (params) {console.log('===== Raw Transaction Inputs =====\n', params)}
