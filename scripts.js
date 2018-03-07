@@ -97,22 +97,25 @@ var createRawTx = function (eosContractAddress, value, web3) {
     .then(block => {
       gasLimit = block.gasLimit
 
-      const recipient = process.env.testWallet
+      const recipient = process.env.testWallet // || eosContractAddress
       
-      // Calculate the ether we want to send, into wei
       const wei = logWeiAmountBeingSent(value, web3)
       const rawTx = {
         nonce: hex(txCount),
         gas: web3.utils.toHex("21000"),
         gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
-        // gasPrice : hex(gasPrice), 
-        // gasLimit: hex(gasLimit),
-        to: recipient, // for testing send to Account Address, for prod send to Contract Address:eosContractAddress,
+        to: recipient,
         value: hex(wei)
-        // chainId: chain
-        // data:""
-      }
       
+      }
+
+      // didnt work when used this. github issue's debating, said in mid-2017 chainId became mandatory but its failing for me:
+      // chainId: chain
+      // this combo didn't work:
+      // gasPrice : hex(gasPrice), 
+      // gasLimit: hex(gasLimit),
+      // not needed, can be used for deploying smart contracts:
+      // data:""
       logRawTxInputsAndHexes({nonce: txCount,gasPrice,gasLimit, to: recipient,value,chain, data: ""}, rawTx)
 
       return new EthTx(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
