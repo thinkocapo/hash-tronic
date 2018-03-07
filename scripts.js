@@ -35,19 +35,34 @@ module.exports = {
       .then(txInstance => {
         const tx = txInstance
         console.log('======= tx =======', tx)
+        // console.log('======= tx.from =======', tx.from()) // doesnt help
         const txSignedSerialized = createSignedSerializedTx(tx, privateKey)
-        console.log('======= txSignedSerialized =======', txSignedSerialized)
+        // console.log('======= txSignedSerialized =======', txSignedSerialized)
         const txSignedSerializedHex = txSignedSerialized.toString('hex')
-        console.log('======= txSignedSerializedHx =======', txSignedSerializedHex)
-        return
+        // console.log('======= txSignedSerializedHx =======', txSignedSerializedHex)
+
+        //web3.eth.getBalance(process.env.address)
+        //  .then(console.log); // shows plenty of wei
+
+        web3.eth.sendSignedTransaction('0x' + txSignedSerializedHex)
+          .then((err, result) => {
+            console.log('======= err    =======\n', JSON.stringify(err,null,4))
+            console.log('======= result =======\n', JSON.stringify(result,null,4))
+            console.log('\n========= COMPLETE ==========\n')
+          })
+
+          // says (receipt) https://github.com/ethereum/web3.js/issues/1134
+          // says (err,result) https://ethereum.stackexchange.com/questions/33473/web3-sendsignedtransaction-transaction-cost
+          // says .on('receipt', console.log); not useful? https://web3js.readthedocs.io/en/1.0/web3-eth.html#sendsignedtransaction 
+
+          // > // see eth.getTransactionReceipt() for details
         
-        // *TODO* send to a Account Address not a Contract Address
-        return web3.eth.sendRawTransaction(`0x${txSignedSerializedHex}`, function(err, txHash) { 
-          if (!err) {
-            console.log('==== transaction hash ==== \n', JSON.stringify(txHash,null,4)); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
-            // web3.eth.getTransaction(hash) to verify
-          } else { console.log('err sendRawTransaction \n', JSON.stringify(err,null,4))}
-        });
+        // return web3.eth.sendRawTransaction(`0x${txSignedSerializedHex}`, function(err, txHash) { 
+        //   if (!err) {
+        //     console.log('==== transaction hash ==== \n', JSON.stringify(txHash,null,4)); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
+        //     // web3.eth.getTransaction(hash) to verify
+        //   } else { console.log('err sendRawTransaction \n', JSON.stringify(err,null,4))}
+        // });
       })
   },
   
