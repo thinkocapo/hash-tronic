@@ -32,19 +32,6 @@ module.exports = {
         //       console.error(error);
         // })
       },
-      sendRawTxTest: async function (web3) {
-        /**
-         * let transaction = { 'to': '0xF0109fC8DF283027b6285cc889F5aA624EaC1F55',
-            'value': 1000000000,
-            'gas': 2000000,
-            'gasPrice': 234567897654321,
-            'nonce': 0,
-            'chainId': 1 }
-    
-            let signed = w3.eth.account.signTransaction(transaction, key)
-            w3.eth.sendRawTransaction(signed.rawTransaction)
-         */
-      },
       filterWatches: async function (web3) {
         // ERROR web3.eth.filter is not a function... isn't there an newer syntax if you check the wiki doc?
         // var filter = web3.eth.filter('pending'); // .Filter

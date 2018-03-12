@@ -1,19 +1,17 @@
 const EthTx = require('ethereumjs-tx')
 const Web3 = require('web3')
+const LOG = require('./transaction-loggers')
 
-// Web3 1.0 Docs http://web3js.readthedocs.io/en/1.0/index.html // don't confuse with v0.2's which is what most search results give yo
 // https://github.com/ethereumjs/ethereumjs-tx/blob/master/examples/transactions.js
 // https://github.com/SilentCicero/ethereumjs-accounts
-// sendTransaction vs sendRawTransaction , estimateGas()
+// A Note on sendTransaction vs sendRawTransaction...
 
 // ethstats.net for gasprice ratio eth/gas
 // eth3r.co for turning pKey into address
 // etherutils
 // ethereumjs/keythereum
 /**
- * Raw Tx from MEW at 1:19a on 03/05/18
- * Most values are hex's of the actual value
- * 
+ * Note - Most values are hex's of the actual value
  * {"nonce":"0x10", // # historical transactions by sender address
  * "gasPrice":"0x04e3b29200", // 21000 ? etermined by the x latest blocks median gas price. 20gwei or 20000000000 // recently 9 000 000 000
  * "gasLimit":"0x5208", // # formerly 21000 to send on MEW or 300000 here // "amount of gas you pay is fixed, but the quantity of ethere it costs for that is not fixed (it varies)" // wont necessarily use all of this limit? e.g. if set a super high limit...
@@ -30,46 +28,46 @@ let webThree = new Web3
 
 module.exports = {
 
-  sendEth2EosContract: async function (web3, value) {
-    return createRawTx(eosContractAddress, value, web3)
+  sendEther: async function (web3, ether, recipient) {
+    return createRawTx(web3, ether, recipient)
       .then(txInstance => {
         const tx = txInstance
         console.log('======= tx =======', tx)
-        // console.log('======= tx.from =======', tx.from()) // doesnt help
+        
         const txSignedSerialized = createSignedSerializedTx(tx, privateKey)
-        // console.log('======= txSignedSerialized =======', txSignedSerialized)
         const txSignedSerializedHex = txSignedSerialized.toString('hex')
+        // console.log('======= txSignedSerialized =======', txSignedSerialized)
         // console.log('======= txSignedSerializedHx =======', txSignedSerializedHex)
 
-        //web3.eth.getBalance(process.env.address)
+        // *TODO* CHECK your 'from' address has funds
+        // web3.eth.getBalance(process.env.fromAddress)
         //  .then(console.log); // shows plenty of wei
 
+        return '------ END ------'
         web3.eth.sendSignedTransaction('0x' + txSignedSerializedHex)
-          .then((err, result) => {
+          .then((err, result) => { // result is txHash?
             console.log('======= err    =======\n', JSON.stringify(err,null,4))
             console.log('======= result =======\n', JSON.stringify(result,null,4))
             console.log('\n========= COMPLETE ==========\n')
+            // TODO - receipts eth.getTransactionReceipt(), looking by txHash, verify exists
+            // says (receipt) https://github.com/ethereum/web3.js/issues/1134
+            // says (err,result) https://ethereum.stackexchange.com/questions/33473/web3-sendsignedtransaction-transaction-cost
+            // says .on('receipt', console.log); not useful? https://web3js.readthedocs.io/en/1.0/web3-eth.html#sendsignedtransaction 
+            // see  for details
           })
-
-          // says (receipt) https://github.com/ethereum/web3.js/issues/1134
-          // says (err,result) https://ethereum.stackexchange.com/questions/33473/web3-sendsignedtransaction-transaction-cost
-          // says .on('receipt', console.log); not useful? https://web3js.readthedocs.io/en/1.0/web3-eth.html#sendsignedtransaction 
-
-          // > // see eth.getTransactionReceipt() for details
-        
-        // return web3.eth.sendRawTransaction(`0x${txSignedSerializedHex}`, function(err, txHash) { 
-        //   if (!err) {
-        //     console.log('==== transaction hash ==== \n', JSON.stringify(txHash,null,4)); // "0x7f9fade1c0d57a7af66ab4ead79fade1c0d57a7af66ab4ead7c2c2eb7b11a91385"
-        //     // web3.eth.getTransaction(hash) to verify
-        //   } else { console.log('err sendRawTransaction \n', JSON.stringify(err,null,4))}
-        // });
       })
   },
   
+  /**
+   * TRADING ARBITRAGE BOT - make one method that performs the following
+   * 1. checks if their are new EOS tokens to claim
+   * 2. runs claimAll and exchange workflow
+   * 3. if no new EOS token available, then send ether to EOS Crowdsale
+   */
   claimEos: function (web3) {
     const eosContractInstance = new web3.eth.Contract(eosContractABI, eosContractAddress);
   },
-  sendEosToExchange: function () {
+  tradeEOSforEther: function () {
     // exchange api - send eos to exchange
     // exchange api - exchange eos for eth
     // exchange api - send eth back to default account address
@@ -77,7 +75,7 @@ module.exports = {
   }
 }
 
-var createRawTx = function (eosContractAddress, value, web3) {
+var createRawTx = function (web3, ether, recipient) {
   // Make web3 calls to get data for Raw Transaction object tx
   let gasPrice, txCount, gasLimit;
   
@@ -86,9 +84,8 @@ var createRawTx = function (eosContractAddress, value, web3) {
   return web3.eth.getGasPrice()
     .then(result => { 
       gasPrice = result // 20000000000      
-      logGasPriceInEther(gasPrice, web3)
 
-      return web3.eth.getTransactionCount(process.env.address) // getTransactionCountAsync
+      return web3.eth.getTransactionCount(process.env.fromAddress) // getTransactionCountAsync
     })
     .then(result => {
       txCount = result
@@ -96,27 +93,22 @@ var createRawTx = function (eosContractAddress, value, web3) {
     })
     .then(block => {
       gasLimit = block.gasLimit
-
-      const recipient = process.env.testWallet // || eosContractAddress
       
-      const wei = logWeiAmountBeingSent(value, web3)
+      const wei = LOG.weiAmountBeingSent(ether)
       const rawTx = {
         nonce: hex(txCount),
         gas: web3.utils.toHex("21000"),
         gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
         to: recipient,
         value: hex(wei)
-      
       }
 
-      // didnt work when used this. github issue's debating, said in mid-2017 chainId became mandatory but its failing for me:
-      // chainId: chain
-      // this combo didn't work:
-      // gasPrice : hex(gasPrice), 
-      // gasLimit: hex(gasLimit),
-      // not needed, can be used for deploying smart contracts:
-      // data:""
-      logRawTxInputsAndHexes({nonce: txCount,gasPrice,gasLimit, to: recipient,value,chain, data: ""}, rawTx)
+      // a github issues in 2017 said chainId became mandatory, but it cuased my tx to fail
+      // and/or the problem was that I was using gasPrice, gasLimit instead of gas, gasPrice.
+      // data is for deploying smart contracts
+      
+      LOG.gasPriceInEther(gasPrice)      
+      LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether ,chain, data: ""}, rawTx)
 
       return new EthTx(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
     })
@@ -137,27 +129,4 @@ var createSignedSerializedTx = function (tx, pKey) {
 var hex = function (gasPrice) {
   return webThree.utils.toHex(gasPrice)
 }
-// TODO - make a single method that will first check if their are new EOS tokens to claim, and then run claimAll and exchange workflow
-// and if no new EOS token available, then send eth to EOS Crowdsale
 
-var logWeiAmountBeingSent = function (value, web3) {
-  const weiCalculated = web3.utils.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei
-  console.log('weiCalculated being sent    ', weiCalculated)
-  const weiEtherConverter = 3000000000000000 // https://etherconverter.online/ .003 ether is 3000000000000000 wei
-  console.log('weiEtherConverter being sent', weiEtherConverter)
-  return weiCalculated
-}
-var logGasPriceInEther = function (gasPrice, web3) {
-  const s1 = gasPrice * 21000
-  const totalEther = web3.utils.fromWei(s1.toString(), "ether")
-  console.log('totalEther for gasPrice         ', totalEther)
-  s2 = 20
-  s3 = web3.utils.toWei(s2.toString(), "gwei") * 21000
-  const totalEtherFromVideo = web3.utils.fromWei(s3.toString(), "ether")
-  console.log('totalEtherFromVideo for gasPrice', totalEtherFromVideo)
-}
-
-var logRawTxInputsAndHexes = function (inputs, rawTx) {
-  console.log('===== Raw Transaction Inputs =====\n', inputs)
-  console.log('===== Raw Transaction        =======\n', rawTx)
-}
