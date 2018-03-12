@@ -1,6 +1,6 @@
-import LOG from './transaction-loggers'
 import webThree from 'web3'
 import ethJsTx from 'ethereumjs-tx'
+const LOG = require('./transaction-loggers')
 
 /**
  * Note - Most values are hex's of the actual value
