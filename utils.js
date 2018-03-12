@@ -37,10 +37,10 @@ export function createRawTransaction (web3, ether, recipient) {
         })
 }
 
-export function createSignedSerializedTransaction (tx, pKey) {
-    const privateKey = Buffer.from(pKey, 'hex')
+export function createSignedSerializedTransaction (transaction, pKey) {
     // TODO - generate address from privateKey and make sure it matches what's in process.env.address or else wrong nonce might get used
-    tx.sign(privateKey)
+    const privateKey = Buffer.from(pKey, 'hex')
+    transaction.sign(privateKey)
     const txSerialized = tx.serialize() // <Buffer f8 ...>
     return txSerialized
 }
