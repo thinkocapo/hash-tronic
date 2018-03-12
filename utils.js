@@ -35,13 +35,13 @@ module.exports = {
                 LOG.gasPriceInEther(gasPrice)      
                 LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
         
-                return new ethJsTx(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
+                return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
             })
     },
 
     createSignedSerializedTransaction: (tx, pKey) => {
-        const privateKey = Buffer.from(pKey, 'hex') // toString() // new Buffer(pKey, 'hex')
-        // *TODO* check console.log('from: AccountAddress (produce from web3. privateKey):', process.env.address)
+        const privateKey = Buffer.from(pKey, 'hex')
+        // TODO - generate address from privateKey and make sure it matches what's in process.env.address or else wrong nonce might get used
         tx.sign(privateKey)
         const txSerialized = tx.serialize() // <Buffer f8 ...>
         return txSerialized

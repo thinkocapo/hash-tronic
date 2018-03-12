@@ -11,17 +11,17 @@ module.exports = {
   sendEther: async function (web3, ether, recipient) {
     return createRawTransaction(web3, ether, recipient)
       .then(rawTransaction => {
-        const transactionSignedSerialized = createSignedSerializedTransaction(rawTransaction, process.env.privateKey) // <Buffer>
+        const transactionSignedSerialized = createSignedSerializedTransaction(rawTransaction, process.env.privateKey)
 
         return
         web3.eth.sendSignedTransaction('0x' + transactionSignedSerialized.toString('hex'))
-          .then((err, result) => { // result is txHash?
+          .then((err, result) => {
             if (err) {
               console.log('======= err    =======\n', JSON.stringify(err,null,4))
             } else {
               console.log('======= result =======\n', JSON.stringify(result,null,4))
             }
-            // looking by txHash, verify exists,  eth.getTransactionReceipt(), 
+            // TODO - lookup by txHash, log some ttransaction data,  eth.getTransactionReceipt(), 
           })
       })
   },
@@ -30,7 +30,7 @@ module.exports = {
    * TRADING ARBITRAGE BOT - make one method that performs the following
    * 1. checks if their are new EOS tokens to claim
    * 2. runs claimAll and exchange workflow
-   * 3. if no new EOS token available, then send ether to EOS Crowdsale
+   * 3. if no new EOS token available, then sendEther() to eosContractAddress (Crowdsale)
    */
   claimEos: function (web3) {
     const eosContractInstance = new web3.eth.Contract(eosContractABI, eosContractAddress);
