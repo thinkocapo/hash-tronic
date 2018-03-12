@@ -2,7 +2,7 @@
 **ethereum**  
 https://github.com/ethereum (node hosted by MyEthereumAPI, but see eth-nodes.js to get an idea of all the places you can find a node to connect to. see index.js to find where this is configured.
 https://ethereum.org/cli for geth CLI basics
-**geth** - The [Go](https://golang.org/) implementation of an ethereum node. Provides a command-line interface to hit the RPC api of the ethereum node. It runs the Ethereum node for you.  
+**geth** - The [Go](https://golang.org/) implementation of an ethereum node. Provides a command-line interface to hit the RPC api of the ethereum node. It runs the Ethereum node for you. My instructions on how I run `geth` are in [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/tools.md)
   
 **web3** - Javascript client lib for connecting to your ethereum node. Makes use of solc. v1.0.0
 Hash-tronic uses [v1.0.0-beta.30](http://web3js.readthedocs.io/en/1.0/index.html) which is fairly new as of 03/12/18, as much of the literature (stackoverflow, github) you'll find is referencing web3 code from [v0.2x.x] (https://github.com/ethereum/wiki/wiki/JavaScript-API)
