@@ -1,7 +1,7 @@
 ## Overview
 Hashtronic was conceived as a trading arbitrage bot that sends ether to the [EOS Crowdsale Smart Contract](https://github.com/EOSIO/eos-token-distribution) in exchange for EOS tokens (ERC-20), which then get re-sold on an exchange for even more ether than you started with.
 
-Currently this repo has code for **sending ether from one address to another**. You can send to either a contract address like EOS or to a account address. We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
+Currently this repo has code for **sending ether from one address to another**. You can send to either an account address or to a contract address (a.k.a. externally owned account)like EOS or to a account address. [Account Address vs Contract Address](https://github.com/ethereum/wiki/wiki/White-Paper#ethereum-accounts). We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
 
 There are instructions in [/docs](https://github.com/thinkocapo/hash-tronic/tree/master/docs) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go.
 
@@ -14,32 +14,32 @@ But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https:/
 let web3 = new Web3(new Web3.providers.HttpProvider(node))
 ```
 2. Paste your private key in a new `/.env` file as `privateKey=[paste_private_key]`. The .gitignore file ensures this never get pushed to Github. This privateKey will be used [here](https://github.com/thinkocapo/hash-tronic/blob/dev/utils.js#L43) to verify your ownership of the account address being used to send ether.
-3. `npm start sendEther 0.003` The recipient will default to whatever you put as `reciepientAddress=[paste_address]` in your `.env`. Or specify it as a [3rd argument](https://github.com/thinkocapo/hash-tronic/blob/dev/index.js#L22) to `npm start`.
+3. `npm start sendEther 0.003` The recipient will default to whatever you put as `reciepientAddress=[paste_address]` in your `.env`. Or specify it as a [3rd argument](https://github.com/thinkocapo/hash-tronic/blob/dev/index.js#L22) to `npm start`. 0.003 ether is ~$2.00 worth of ether as of 03/12/18.
 4. Make sure all the logged output looks good.
 5. Remove the early `return` statement in the sendEther method. Re-run `npm start sendEther 0.003` so the transaction will go through
-6. You'll see a resulting Transaction Hash logged as output. Visit the following links the [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
+6. You'll see a resulting Transaction Hash logged as output. Visit the following links at [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
 `https://etherscan.io/tx/[transactionHash]`  
 `https://etherscan.io/address/[fromAddress]`  
-`https://etherscan.io/address/[recipientAddress]`
+`https://etherscan.io/address/[recipientAddress]`  
+7. If your $ didn't go through or its stuck for days on pending, there is no un-do button.
 
-If your $ didn't go through or its stuck for hours on pending, there might not be anything you can do. Tis the nature of this Wild West we call cryptocurrencies. 
-
-### Transaction vs Raw Transaction
+### Raw Transaction vs Transaction
 **Raw Transaction**
 - You sign the transaction object using your privateKey, before sending it to the ethereum node. This generates the raw bytes. Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
 ```
 transaction.sign(privateKey)
 web3.eth.sendSignedTransaction('0x' + transaction.toString('hex'))
 ```
-- **Raw bytes are required if you are using a platform like MyEtherWallet/Infura/Etherscan, which do not not handle private keys but deal only with signed transactions.**  
-- **If you are running geth (ethereum node) yourself locally, then you can manage your own privateKeys (i.e. import them into geth) so you don't have to 'sign' the transaction everytime.**  
+- **Raw bytes are required if you're connecting to a node hosted by MyEtherWallet/Infura/Etherscan, which do not not handle private keys but deal only with signed transactions.**  
+- **If you're connecting to a local instance of geth/ethereum (localhost:8545), then you can manage your own privateKeys (i.e. import them into geth) so you don't have to 'sign' the transaction everytime.**  
 - [Difference Between Transactions and Raw Transactions - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/6905/difference-between-transactions-and-raw-transactions-in-web3-js)  
 - [What Is A Raw Transaction Used For - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/18928/what-is-a-raw-transaction-and-what-is-it-used-for)
+
+*VS.*
 
 **Transaction**
 - You already unlocked the account at that node, the node can handle privateKeys.
 ```
-web3.accounts[0]
 web3.eth.sendTransaction({
     from: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
     to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe',
