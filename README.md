@@ -1,7 +1,7 @@
-## OVERVIEW
+## OVERVIEW - How to Send Ether
 Hashtronic was conceived as a trading arbitrage bot that sends ether to the [EOS Crowdsale Smart Contract](https://github.com/EOSIO/eos-token-distribution) in exchange for EOS tokens ([ERC-20](https://blockonomi.com/erc-20-token-guide/)), which then get re-sold on an exchange for even more ether than you started with.
 
-Currently this repo has code for **sending ether from one address to another**. You can send to either an account address or to a contract address (a.k.a. externally owned account)like EOS. [Account Address vs Contract Address](https://github.com/ethereum/wiki/wiki/White-Paper#ethereum-accounts). We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
+Currently this repo has code for **sending ether from one address to another** on the mainnet, the real public ethereum blockchain. You can send to either an account address or to a contract address (a.k.a. externally owned account)like EOS. [Account Address vs Contract Address](https://github.com/ethereum/wiki/wiki/White-Paper#ethereum-accounts). We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
 
 There are instructions in [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/tree/master/docs/geth.md) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go. Additional notes and links in [/docs/tools.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/tools.md) on all tools involved.
 
