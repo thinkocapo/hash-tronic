@@ -10,15 +10,10 @@ https://github.com/ethereumjs/ethereumjs-tx is how we created our Transaction Ob
 - My instructions on how I run `geth` are in [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/tools.md)
   
 **web3** - Javascript client lib for connecting to your ethereum node. Uses solc. v1.0.0
-Hash-tronic uses [v1.0.0-beta.30](http://web3js.readthedocs.io/en/1.0/index.html) which is fairly new as of 03/12/18, as much of the literature (stackoverflow, github) you'll find is referencing web3 code from [v0.2x.x] (https://github.com/ethereum/wiki/wiki/JavaScript-API)  
-NOTE - this should save you some headache when you're starting out with web3:
 - **Hash-tronic uses**: [v1.0.0-beta.30](http://web3js.readthedocs.io/en/1.0/index.html)
 - **not to be confused with**: [v0.2x.x](https://github.com/ethereum/wiki/wiki/JavaScript-API)
 - The v0.2x.x methodology (syntax, methods) is what a lot of literature (e.g. stackoverflow, github) references
 - Some developers use v1.0.0 in production, many are still using v0.2x.x
-
-[documentation .2x.x](https://github.com/ethereum/wiki/wiki/JavaScript-API)
-[documentation 1.0](http://web3js.readthedocs.io/en/1.0/index.html)
 
 **solc** - [Module](GitHub - ethereum/solc-js: Javascript bindings for the solidity compiler) that compiles smart contracts written in `.sol` into EVM bytecode for you to deploy. We won't be using solc in this project as we are *calling* smart contract methods and *sending* ether using web3, but not *deploying* smart contract bytecode. The eos_sale.sol ([eos-distribution](https://github.com/EOSIO/eos-token-distribution/tree/master/src)) smartcontract was already compiled and deployed by its creators.
 
