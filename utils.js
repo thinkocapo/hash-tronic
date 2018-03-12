@@ -2,9 +2,8 @@ const LOG = require('./transaction-loggers')
 const webThree = require('web3')
 const ethJsTx = require('ethereumjs-tx')
 
-
 module.exports = {
-    createRawTx: function (web3, ether, recipient) {
+    createRawTransaction: function (web3, ether, recipient) {
     /**
      * Note - Most values are hex's of the actual value
      * {"nonce":"0x10", // # historical transactions by sender address
@@ -45,7 +44,7 @@ module.exports = {
       })
     },
 
-    createSignedSerializedTx: (tx, pKey) => {
+    createSignedSerializedTransaction: (tx, pKey) => {
         const privateKeyX = Buffer.from(pKey, 'hex') // toString() // new Buffer(pKey, 'hex')
         // *TODO*
         //console.log('from: AccountAddress (produce from web3. privateKey):', process.env.address)
@@ -56,6 +55,7 @@ module.exports = {
         return txSerialized
     },
 }
+
 function hex (gasPrice) {
     return webThree.utils.toHex(gasPrice)
 }
