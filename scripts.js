@@ -13,21 +13,15 @@ module.exports = {
       .then(rawTransaction => {
         const transactionSignedSerialized = createSignedSerializedTransaction(rawTransaction, process.env.privateKey) // <Buffer>
 
-        // *TODO* CHECK your 'from' address has funds
-        // web3.eth.getBalance(process.env.fromAddress)
-        //  .then(console.log); // shows plenty of wei
-
-        return '------ END ------'
+        return
         web3.eth.sendSignedTransaction('0x' + transactionSignedSerialized.toString('hex'))
           .then((err, result) => { // result is txHash?
-            console.log('======= err    =======\n', JSON.stringify(err,null,4))
-            console.log('======= result =======\n', JSON.stringify(result,null,4))
-            console.log('\n========= COMPLETE ==========\n')
-            // TODO - receipts eth.getTransactionReceipt(), looking by txHash, verify exists
-            // says (receipt) https://github.com/ethereum/web3.js/issues/1134
-            // says (err,result) https://ethereum.stackexchange.com/questions/33473/web3-sendsignedtransaction-transaction-cost
-            // says .on('receipt', console.log); not useful? https://web3js.readthedocs.io/en/1.0/web3-eth.html#sendsignedtransaction 
-            // see  for details
+            if (err) {
+              console.log('======= err    =======\n', JSON.stringify(err,null,4))
+            } else {
+              console.log('======= result =======\n', JSON.stringify(result,null,4))
+            }
+            // looking by txHash, verify exists,  eth.getTransactionReceipt(), 
           })
       })
   },
@@ -46,63 +40,32 @@ module.exports = {
     // exchange api - exchange eos for eth
     // exchange api - send eth back to default account address
     // log details on what fees/money was made
+  },
+
+  /* MISC */
+  filterWatches: async function (web3) {
+    // ERROR web3.eth.filter is not a function... isn't there an newer syntax if you check the wiki doc?
+    // var filter = web3.eth.filter('pending'); // .Filter
+    // var filter = web3.eth.subscribe('pendingTransactions', function (err, res) {
+    //   console.log('\n -- SUBSCRIBE err --\n', err) // current provider doesnt support subscriptions: HTTPProvider
+    //   console.log('\n -- SUBSCRIBE res --\n', res)
+    // });
+    // filter.watch(function(error, result) {
+    //   if (!error) {
+    //     web3.eth.getTransaction(result, function(error, data) {
+    //       if (!error) $("#newTxs tr:first").after(''+data.from+''+data.to+' '+web3.fromWei(data.value,'ether').toString()+' ETH ');
+    //     });
+    //   }
+    // });
+    //Result...
+    //checkout latest transactions below, it might take a second to load as it is waiting for incoming txs
+  },
+  getBalance: async function (web3) {
+    web3.eth.getBalance("0x7602aCd0a747332Ce638a0b9f6d7532767303C8F").then((res, err) => {})
+  },
+  getBlock: async function (web3) {
+    return web3.eth.getBlock(5100000).then((res, err) => {})
   }
 }
 
-// var createRawTx = function (web3, ether, recipient) {
-//   /**
-//    * Note - Most values are hex's of the actual value
-//    * {"nonce":"0x10", // # historical transactions by sender address
-//    * "gasPrice":"0x04e3b29200", // 21000 ? etermined by the x latest blocks median gas price. 20gwei or 20000000000 // recently 9 000 000 000
-//    * "gasLimit":"0x5208", // # formerly 21000 to send on MEW or 300000 here // "amount of gas you pay is fixed, but the quantity of ethere it costs for that is not fixed (it varies)" // wont necessarily use all of this limit? e.g. if set a super high limit...
-//    * "to":"0x1eec5a83f78d3952fe86747034a7514f2dc9925c", // address of recipient
-//    * "value":"0x2386f26fc10000", // eventually // eventually hex(web3.utils.toWei(value.toString(),'ether'))
-//    * "data":"", // only for deploying smart contract
-//    * "chainId":1}
-//    */
-
-//   // Make web3 calls to get data for Raw Transaction object tx
-//   let gasPrice, txCount, gasLimit;
-  
-//   return Promise.all([web3.eth.getGasPrice(), web3.eth.getTransactionCount(process.env.fromAddress), web3.eth.getBlock('latest')])
-//     .then(results => {
-//       gasPrice = results[0]
-//       txCount = results[1]
-//       gasLimit = results[2].gasLimit
-      
-//       const wei = LOG.weiAmountBeingSent(ether)
-//       const rawTx = {
-//         nonce: hex(txCount),
-//         gas: web3.utils.toHex("21000"),
-//         gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
-//         to: recipient,
-//         value: hex(wei)
-//       }
-
-//       // a github issues in 2017 said chainId became mandatory, but it cuased my tx to fail
-//       // and/or the problem was that I was using gasPrice, gasLimit instead of gas, gasPrice.
-//       // data is for deploying smart contracts
-      
-//       LOG.gasPriceInEther(gasPrice)      
-//       LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
-
-//       return new EthTx(rawTx) // Transaction: { raw: [  <Buffer >], _fields: ['nonce',]}  
-//     })
-// }
-
-// var createSignedSerializedTx = function (tx, pKey) {
-//   const privateKeyX = Buffer.from(pKey, 'hex') // toString() // new Buffer(pKey, 'hex')
-  
-//   // *TODO*
-//   //console.log('from: AccountAddress (produce from web3. privateKey):', process.env.address)
-  
-//   tx.sign(privateKeyX)
-//   const txSerialized = tx.serialize()
-//   //console.log('txSerialized\n', txSerialized) // <Buffer f8 89 80 86 09 18 4e 7 ... >
-//   return txSerialized
-// }
-
-// var hex = function (gasPrice) {
-//   return webThree.utils.toHex(gasPrice)
-// }
 
