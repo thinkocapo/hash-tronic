@@ -1,19 +1,28 @@
 ## Overview
 Hashtronic was conceived as a trading arbitrage bot that sends ether to the [EOS Crowdsale Smart Contract](https://github.com/EOSIO/eos-token-distribution) in exchange for EOS tokens (ERC-20), which then get re-sold on an exchange for even more ether than you started with.
 
-Currently this repo has code for sending ether from one address to another (can be to the EOS contract address or any personal Account address).
+Currently this repo has code for **sending ether from one address to another**. You can send to either a contract address like EOS or to a account address. We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
 
-There are instructions in [/docs](https://github.com/thinkocapo/hash-tronic/tree/dev/docs) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go.
+There are instructions in [/docs](https://github.com/thinkocapo/hash-tronic/tree/master/docs) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go.
 
 But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https://www.myetherapi.com/).
 
 ## GETTING STARTED - How to Send Ether
-1. Select which ethereum node (geth) you'll be connecting to in index.js/L.... I recommend the MyEtherWallet node but you have other options in eth-nodes.js. See docs/geth-node.md for notes on how to run your own.
+1. Select which ethereum node (geth) you'll be connecting to in [index.js#L15](https://github.com/thinkocapo/hash-tronic/blob/master/index.js#L15). I recommend MyEtherWallet's node but you have other options in [/eth-nodes.js](https://github.com/thinkocapo/hash-tronic/blob/dev/ethereum-nodes.js). See [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/geth.md) for instructions on how to run your own.
+```
+// tells web3 which ethereum node to connect to
+let web3 = new Web3(new Web3.providers.HttpProvider(node))
+```
 2. Put your private key in a .env file as privateKey=[paste_private_key]. The .gitignore file makes sure this file will never get pushed to Github. This will be used by /scripts.js sendEther method and web3 to verify your ownership of the account address being used to send ether.
 3. `npm start sendEther 0.003` Specify the recipient account address as a 3rd argument to this command, or put it in .env as reciepientAddress=[paste_address] which is the default
 4. Make sure all the logged output looks good.
-5. Remove the early `return` statement in scripts.js sendEther... and re-run so the transaction will go through
-6. You'll see a resulting TransactionHash id in the logged output. Go to etherscan and make sure the data is good... web3js method to get the transaction details...
+5. Remove the early `return` statement in the sendEther method. Re-run `npm start sendEther 0.003` so the transaction will go through
+6. You'll see a resulting Transaction Hash logged as output. Visit the following links the [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
+`https://etherscan.io/tx/[transactionHash]`  
+`https://etherscan.io/address/[fromAddress]`  
+`https://etherscan.io/address/[recipientAddress]`
+
+If your $ didn't go through or its stuck for hours on pending, there might not be anything you can do. Tis the nature of this Wild West we call cryptocurrencies. 
 
 ### IMPORTANT to Understand - Transaction vs Raw Transaction
 **Raw Transaction** - You sign the transaction object using your privateKey, before sending it to the ethereum node. This generates the raw bytes. Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
