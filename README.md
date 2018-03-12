@@ -1,116 +1,68 @@
-## Overview
-Hashtronic is a trading arbitrage bot that makes use of Smart Contracts from the E0S Crowdsale and crypt0currency exchanges for trading. It requires you run an Ethereum Node using *geth*. Geth provides a JRC-20 API interface to the ethereum node so you can connect to it via a Node.js script that uses web3.js to connect to it. By connecting to the ethereum node, we can interact with the E0S Smart Contract. Many notes are provided regarding the tools involved and how to properly setup and use them.
-The program does the following things, which are outlined with comments in `./index.js`:
-1. Send ether from default *geth* wallet to E0S Crowdsale Contract
-2. Claim your E0S tokens to your *geth* account wallet the following morning.
-3. Send your E0S tokens to a cry!pto trading exchange
-4. Performs a trade of E0S/ETH using the exchange's dev API.
-5. Sends ETH back to default *geth* wallet. The quantity of this ETH is greater than what you started with in Step 1.
-6. Repeat from Step 1.
+## OVERVIEW
+Hashtronic was conceived as a trading arbitrage bot that sends ether to the [EOS Crowdsale Smart Contract](https://github.com/EOSIO/eos-token-distribution) in exchange for EOS tokens ([ERC-20](https://blockonomi.com/erc-20-token-guide/)), which then get re-sold on an exchange for even more ether than you started with.
 
-### Tools
-**ethereum**  
-https://github.com/ethereum
-https://ethereum.org/cli for geth CLI basics
-https://github.com/ethereum/wiki/wiki  
-Ethereum is in ~/Library/Ethereum (Mac OS) and the blockchain is in ~/Library/Ethereum/geth/chaindata    
-Private Keys are in ~/Library/Ethereum/keystore (Linux/Windows)[https://github.com/ethereum/go-ethereum/wiki/Backup-&-restore]  
-**geth** - Go Implementation of an API to the thereum node. Runs the Ethereum node for you.  
-`geth attach` to start a console connected to your geth that's in the other bash window
-list accounts... https://github.com/ethereum/go-ethereum/wiki/Managing-your-accounts  
-`geth account list` or `> eth.accounts`
-**Version 1.7.3-stable** (02/14/18), previous versions may use the --fast command which has since been deprecated  
-https://github.com/ethereum/go-ethereum/wiki
-https://github.com/ethereum/go-ethereum/wiki/geth  
-**web3** - Javascript client lib for connecting to your ethereum node. Makes use of solc 
-**Version ^1.0.0-beta.30** (02/14/18) https://github.com/ethereum/web3.js/  
-[documentation .2x.x](https://github.com/ethereum/wiki/wiki/JavaScript-API)
-[documentation 1.0](http://web3js.readthedocs.io/en/1.0/index.html)
-**Node and NPM** - for running a node script that uses *web3* to connect to *geth*, and for talking to the crypto exchanges too.   
-**solc** - module that compiles contracts for you. Solidity compiler for compiling smart contracts. We won't be using it in this project but its good to know this. The EOS Smartcontract was already compiled by the EOS developers and deployed.
+Currently this repo has code for **sending ether from one address to another**. You can send to either an account address or to a contract address (a.k.a. externally owned account)like EOS. [Account Address vs Contract Address](https://github.com/ethereum/wiki/wiki/White-Paper#ethereum-accounts). We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
 
-## GETTING STARTED
-1. Start an ethereum node connected to the mainnet. run it in fast mode.
-#### If accessing the RPC from a browser
-CORS will need to be enabled with the appropriate domain set. Otherwise, JavaScript calls are limit by the same-origin policy and requests will fail:
-`geth --rpc --rpccorsdomain "http://localhost:3000"` that's **--rpccorsdomain**
+There are instructions in [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/tree/master/docs/geth.md) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go.
 
-#### Avoid The Deprecated Code that's all over Stackoverflow
-the `--fast` flag in `geth --fast --cache=1024` is **DEPRECATED**. I last used it in geth v1.4
-*Note* official documentation says to use `--cache 2048` and not `--cache=2048` like many users says. Unsure if it makes a difference.
+But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https://www.myetherapi.com/).
 
-#### Avoid unecessary commands that aren't necessary at this time
-**Popular commands that won't help us and why**
-`geth --syncmode "fast" --cache 2048` is missing the flag for RPC connections (so can't connect from web3 or a web app)
-`geth --syncmode "fast" --cache 2048 --rpcapi --rpc` not needed
-`--rpcport` default port is 8545 which we're fine with, so omitt this flag
-`--rpcaddr` default is localhost which we're fine with, so omitt this
-`--rpcapi` API's offered over the HTTP-RPC interface (default: "eth,net,web3")
+**IMPORTANT DEV TIP:**  
+- **web3** is the javascript client lib for connecting to your ethereum node.
+- **Hash-tronic uses**: web3 [v1.0.0-beta.30](http://web3js.readthedocs.io/en/1.0/index.html)
+- **not to be confused with**: web3 [v0.2x.x](https://github.com/ethereum/wiki/wiki/JavaScript-API)
+- The v0.2x.x methodology (syntax, methods) is what a lot of literature (e.g. stackoverflow, github) references
+- Some developers use v1.0.0 in production, many are still using v0.2x.x
 
-**Correct Command for Starting Geth and your Ethereum Node**
-`geth --syncmode "fast" --cache 2048 --rpc`
+## GETTING STARTED - How to Send Ether
+1. `git clone https://github.com/thinkocapo/hash-tronic.git`
+2. Select which ethereum node (geth) you'll connect to in [index.js#L15](https://github.com/thinkocapo/hash-tronic/blob/master/index.js#L15). I recommend MyEtherWallet's node but you have other options in [/eth-nodes.js](https://github.com/thinkocapo/hash-tronic/blob/dev/ethereum-nodes.js). See [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/geth.md) for instructions on how to run your own.
+```
+// tells web3 which ethereum node it will make calls to
+let web3 = new Web3(new Web3.providers.HttpProvider(node))
+```
+3. Paste your private key in a new `/.env` file as `privateKey=[private_key]`. The .gitignore file ensures this never get pushed to Github. This privateKey will be used [here](https://github.com/thinkocapo/hash-tronic/blob/dev/utils.js#L43) to verify your ownership of the account address being used to send ether. See 'Raw Transaction' section for more technical details.
+4. `npm start sendEther 0.003` The recipient will default to whatever you put as `reciepientAddress=[paste_address]` in your `.env`. Or specify it as a [3rd argument](https://github.com/thinkocapo/hash-tronic/blob/dev/index.js#L22) to `npm start`. 0.003 ether is ~$2.00 worth of ether as of 03/12/18.
+5. Make sure all [loggers](https://github.com/thinkocapo/hash-tronic/blob/dev/transaction-loggers.js) executed, the output looks good, and there are no errors.
+6. Remove the early `return` statement in the sendEther method. Re-run `npm start sendEther 0.003` so the transaction will go through
+7. You'll see a resulting Transaction Hash logged as output. Visit the following links at [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
+`https://etherscan.io/tx/[transactionHash]`  
+`https://etherscan.io/address/[fromAddress]`  
+`https://etherscan.io/address/[recipientAddress]`  
+8. If your $ didn't go through or its stuck for days on pending, there is no un-do button.
 
-If syncronisation is working properly it should settle on log activity like:
-`INFO [02-14|17:17:31] Imported new block receipts count=124  elapsed=203.265ms bytes=9311747 number=5086552 hash=a4e3fe…2c9c60 ignored=0` 
-where `number` is the Block Height (i.e. latest block mined), so 5,086,552 blocks in the Ethereum blockchain as of 02/14/17, which are 52GB on my machine. `du -h ~/Library/Ethereum/geth/chaindata` to find out how many GB
+### Raw Transaction vs Transaction
+**Raw Transaction**
+- You sign the transaction object using your privateKey, before sending it to the ethereum node. This generates the raw bytes. Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
+- You could take this signed transaction object, and email it to a friend and have them send it to the ethereum node via web3.js, if you wanted to.
+```
+transaction.sign(privateKey)
+web3.eth.sendSignedTransaction('0x' + transaction.toString('hex'))
+```
+- **Raw bytes are required if you're connecting to a node hosted by MyEtherWallet/Infura/Etherscan, which do not not handle private keys but deal only with signed transactions.**  
+- **If you're connecting to a local instance of geth/ethereum (localhost:8545), then you can manage your own privateKeys (i.e. import them into geth) so you don't have to 'sign' the transaction everytime.**  
+- [Difference Between Transactions and Raw Transactions - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/6905/difference-between-transactions-and-raw-transactions-in-web3-js)  
+- [What Is A Raw Transaction Used For - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/18928/what-is-a-raw-transaction-and-what-is-it-used-for)
 
-Geth is now running on port `localhost:8545` and our node script will communicate to it in step 3.
+*VS.*
 
-2. Import a Private Key (Ethereum Account) to Geth, one that already has Eth 
-In a new shell window (consider doing this before running Geth node. shouldn't hurt to do it afterwards though) 
-`geth account import ~/path/to/<keyfile>` do not put in ./hash-tronic or ~/Library/Ethereum, for security  
+**Transaction**
+- You already unlocked the account at that node, the node can handle privateKeys.
+```
+web3.eth.sendTransaction({
+    from: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
+    to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe',
+    value: '1000000000000000'
+})
+// Notice -  no privateKey needed, because it was already imported and geth can access it at web3.accounts[0]
+```
 
-- Save the passphrase somewhere secure
-- Confirm the public address it gives you is same as the one your privateKey already corresponded to.
-- Open a geth console by typing `geth attach` and then `> eth.accounts` to make sure your account is there.
-- Check the balance using (geth command?, or insert a script *TODO*) 
-- See that a keystore file was created like `~/Library/Ethereum/geth/keystore/UTC--2018-02-15T01-52-15.596264000Z--7d0a72767347332be638a0b9f3d751601ac03c8f  
-You can also create a new address/privateKey, [instructions](https://github.com/ethereum/go-ethereum/wiki/Managing-your-accounts)
-
-
-3. Run the node script using npm start
-Web3 config makes JRC-20 protocool requests to the node your started on `localhost:8545`. This address:port is specified in the index.js file during web3 instance configuration.
-
-### Parity
-`parity ui` - starts the UI in `http://127.0.0.1:8180` /#/?token=0tzv-OvXt-WGFZ-CBKh
-^^ starts regular sync which we don't want...
-
-Delete parity db blockchain
-`parity db kill`
-
-`parity --warp` Warp Synchronization - https://github.com/paritytech/parity/wiki/Getting-Synced
-
-try `parity ui --warp --mode=passive` what is --mode=passive? https://github.com/paritytech/parity/issues/1244
-
-pruning? https://ethereum.stackexchange.com/questions/3332/what-is-the-parity-light-pruning-mode/4327
-
-warps, and then resumes regulat syncing? not what I want...
-https://github.com/paritytech/parity/wiki/FAQ:-Backup,-Restore,-and-Files
-
-how to use parity, interact with from consoles
-https://github.com/paritytech/parity/wiki/Basic-Usage#javascript-console Applicants > Console
-
-1. Save the "snapshots" via parity ui --warp --mode=passive
-2. try getting my balance / importing latest block / getting EOS contract
-3. Need import private key? Can do from web3.js or JSON-RPC Client
-
-#### Sending Transaction vs Raw Transaction
-**Raw Transaction** - you sign the tx object using a privateKey, before sending to the geth node. tx.sign web3.eth.sendRawTransaction
-A raw transaction is a transaction in raw bytes.
-If one has the raw bytes of a valid transaction, they can use sendRawTransaction.
-
-Raw bytes are required if you are using a platform like infura.io which does not handle private keys but deal only with signed transactions.
-
-https://ethereum.stackexchange.com/questions/6905/difference-between-transactions-and-raw-transactions-in-web3-js
-Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
-https://ethereum.stackexchange.com/questions/18928/what-is-a-raw-transaction-and-what-is-it-used-for
-
-**Transaction ** - web3.accounts[0] - you already unlocked the account at that node, the node can handle privateKeys.
-Otherwise, web3.js creates the signed transaction's bytes for you automatically as part of sendTransaction().
-
-another way - https://github.com/ethereum/go-ethereum/wiki/Sending-ether
-
-
-
-
- 
+### Trading Arbitrage - Roadmap
+Step 1 is the [sendEther](https://github.com/thinkocapo/hash-tronic/blob/dev/scripts.js#L9) method documented above.
+1. Send ether from your account address to the to E0S contract address.
+2. Claim your E0S tokens the next day by calling the eos contract's claimAll() method, using your account address.
+3. Send your E0S tokens to a crypto trading exchange by hitting their API.
+4. Perform a trade of E0S-to-ETH using the exchange's API.
+5. Send this ether back to your account address.
+6. The quantity of this ETH is greater than what you started with in Step 1.
+7. Repeat from Step 1.
