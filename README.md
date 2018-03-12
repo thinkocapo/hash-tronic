@@ -7,6 +7,13 @@ There are instructions in [/docs/geth.md](https://github.com/thinkocapo/hash-tro
 
 But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https://www.myetherapi.com/).
 
+**IMPORTANT DEV TIP:**  
+- **web3** is the javascript client lib for connecting to your ethereum node.
+- **Hash-tronic uses**: web3 [v1.0.0-beta.30](http://web3js.readthedocs.io/en/1.0/index.html)
+- **not to be confused with**: web3 [v0.2x.x](https://github.com/ethereum/wiki/wiki/JavaScript-API)
+- The v0.2x.x methodology (syntax, methods) is what a lot of literature (e.g. stackoverflow, github) references
+- Some developers use v1.0.0 in production, many are still using v0.2x.x
+
 ## GETTING STARTED - How to Send Ether
 1. `git clone https://github.com/thinkocapo/hash-tronic.git`
 2. Select which ethereum node (geth) you'll connect to in [index.js#L15](https://github.com/thinkocapo/hash-tronic/blob/master/index.js#L15). I recommend MyEtherWallet's node but you have other options in [/eth-nodes.js](https://github.com/thinkocapo/hash-tronic/blob/dev/ethereum-nodes.js). See [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/geth.md) for instructions on how to run your own.
