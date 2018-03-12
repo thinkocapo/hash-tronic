@@ -14,12 +14,12 @@ export async function sendEther (web3, ether, recipient) {
     return // remove once you've confirmed everything in the loggers looks good
     web3.eth.sendSignedTransaction('0x' + transactionSignedSerialized.toString('hex'))
       .then((err, result) => {
-        if (err) {
-          console.log('======= err    =======\n', JSON.stringify(err,null,4))
-        } else {
+        if (err) { console.log('======= err =======\n', JSON.stringify(err,null,4))
+        } else { 
           console.log('======= result =======\n', JSON.stringify(result,null,4))
+          // web3.eth.getTransaction(transactionHash [, callback])
+          // web3.eth.getTransactionReceipt(hash [, callback])
         }
-        // TODO - lookup by txHash, log some ttransaction data,  eth.getTransactionReceipt(), 
       })
   })
 }
