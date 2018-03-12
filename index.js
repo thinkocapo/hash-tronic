@@ -1,3 +1,5 @@
+require("babel-register");
+require("babel-polyfill");
 require('dotenv').config()
 const ethNodes = require('./ethereum-nodes')
 const scripts = require('./scripts')

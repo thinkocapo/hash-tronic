@@ -1,12 +1,12 @@
-const webThree = require('web3')
+import webThree from 'web3'
 
 module.exports = {
     gasPriceInEther: function (gasPrice) {
         const s1 = gasPrice * 21000
         const totalEther = webThree.utils.fromWei(s1.toString(), "ether")
         console.log('totalEther for gasPrice         ', totalEther)
-        s2 = 20
-        s3 = webThree.utils.toWei(s2.toString(), "gwei") * 21000
+        const s2 = 20
+        const s3 = webThree.utils.toWei(s2.toString(), "gwei") * 21000
         const totalEtherFromVideo = webThree.utils.fromWei(s3.toString(), "ether")
         console.log('totalEtherFromVideo for gasPrice', totalEtherFromVideo)
     },
