@@ -1,21 +1,22 @@
-## Overview
-Hashtronic was conceived as a trading arbitrage bot that sends ether to the [EOS Crowdsale Smart Contract](https://github.com/EOSIO/eos-token-distribution) in exchange for EOS tokens (ERC-20), which then get re-sold on an exchange for even more ether than you started with.
+## OVERVIEW
+Hashtronic was conceived as a trading arbitrage bot that sends ether to the [EOS Crowdsale Smart Contract](https://github.com/EOSIO/eos-token-distribution) in exchange for EOS tokens ([ERC-20](https://blockonomi.com/erc-20-token-guide/)), which then get re-sold on an exchange for even more ether than you started with.
 
-Currently this repo has code for **sending ether from one address to another**. You can send to either an account address or to a contract address (a.k.a. externally owned account)like EOS or to a account address. [Account Address vs Contract Address](https://github.com/ethereum/wiki/wiki/White-Paper#ethereum-accounts). We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
+Currently this repo has code for **sending ether from one address to another**. You can send to either an account address or to a contract address (a.k.a. externally owned account)like EOS. [Account Address vs Contract Address](https://github.com/ethereum/wiki/wiki/White-Paper#ethereum-accounts). We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
 
-There are instructions in [/docs](https://github.com/thinkocapo/hash-tronic/tree/master/docs) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go.
+There are instructions in [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/tree/master/docs/geth.md) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go.
 
 But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https://www.myetherapi.com/).
 
 ## GETTING STARTED - How to Send Ether
-1. Select which ethereum node (geth) you'll be connecting to in [index.js#L15](https://github.com/thinkocapo/hash-tronic/blob/master/index.js#L15). I recommend MyEtherWallet's node but you have other options in [/eth-nodes.js](https://github.com/thinkocapo/hash-tronic/blob/dev/ethereum-nodes.js). See [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/geth.md) for instructions on how to run your own.
+0. `git clone https://github.com/thinkocapo/hash-tronic.git`
+1. Select which ethereum node (geth) you'll connect to in [index.js#L15](https://github.com/thinkocapo/hash-tronic/blob/master/index.js#L15). I recommend MyEtherWallet's node but you have other options in [/eth-nodes.js](https://github.com/thinkocapo/hash-tronic/blob/dev/ethereum-nodes.js). See [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/geth.md) for instructions on how to run your own.
 ```
-// tells web3 which ethereum node to connect to
+// tells web3 which ethereum node it will make calls to
 let web3 = new Web3(new Web3.providers.HttpProvider(node))
 ```
-2. Paste your private key in a new `/.env` file as `privateKey=[paste_private_key]`. The .gitignore file ensures this never get pushed to Github. This privateKey will be used [here](https://github.com/thinkocapo/hash-tronic/blob/dev/utils.js#L43) to verify your ownership of the account address being used to send ether.
+2. Paste your private key in a new `/.env` file as `privateKey=[private_key]`. The .gitignore file ensures this never get pushed to Github. This privateKey will be used [here](https://github.com/thinkocapo/hash-tronic/blob/dev/utils.js#L43) to verify your ownership of the account address being used to send ether. See 'Raw Transaction' section for more technical details.
 3. `npm start sendEther 0.003` The recipient will default to whatever you put as `reciepientAddress=[paste_address]` in your `.env`. Or specify it as a [3rd argument](https://github.com/thinkocapo/hash-tronic/blob/dev/index.js#L22) to `npm start`. 0.003 ether is ~$2.00 worth of ether as of 03/12/18.
-4. Make sure all the logged output looks good.
+4. Make sure all [loggers](https://github.com/thinkocapo/hash-tronic/blob/dev/transaction-loggers.js) executed, the output looks good, and there are no errors.
 5. Remove the early `return` statement in the sendEther method. Re-run `npm start sendEther 0.003` so the transaction will go through
 6. You'll see a resulting Transaction Hash logged as output. Visit the following links at [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
 `https://etherscan.io/tx/[transactionHash]`  
@@ -26,6 +27,7 @@ let web3 = new Web3(new Web3.providers.HttpProvider(node))
 ### Raw Transaction vs Transaction
 **Raw Transaction**
 - You sign the transaction object using your privateKey, before sending it to the ethereum node. This generates the raw bytes. Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
+- You could take this signed transaction object, and email it to a friend and have them send it to the ethereum node via web3.js, if you wanted to.
 ```
 transaction.sign(privateKey)
 web3.eth.sendSignedTransaction('0x' + transaction.toString('hex'))
@@ -46,11 +48,10 @@ web3.eth.sendTransaction({
     value: '1000000000000000'
 })
 // Notice -  no privateKey needed, because it was already imported and geth can access it at web3.accounts[0]
-// this technique creates the  bytes for us
 ```
 
 ### Trading Arbitrage - Roadmap
-Currently step 1 is working and is documented in great detail. See the 'sendEther' method here...
+Step 1 is the [sendEther](https://github.com/thinkocapo/hash-tronic/blob/dev/scripts.js#L9) method documented above.
 1. Send ether from your account address to the to E0S contract address.
 2. Claim your E0S tokens the next day by calling the eos contract's claimAll() method, using your account address.
 3. Send your E0S tokens to a crypto trading exchange by hitting their API.
