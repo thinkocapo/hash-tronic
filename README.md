@@ -13,8 +13,8 @@ But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https:/
 // tells web3 which ethereum node to connect to
 let web3 = new Web3(new Web3.providers.HttpProvider(node))
 ```
-2. Put your private key in a .env file as privateKey=[paste_private_key]. The .gitignore file makes sure this file will never get pushed to Github. This will be used by /scripts.js sendEther method and web3 to verify your ownership of the account address being used to send ether.
-3. `npm start sendEther 0.003` Specify the recipient account address as a 3rd argument to this command, or put it in .env as reciepientAddress=[paste_address] which is the default
+2. Paste your private key in a new `/.env` file as `privateKey=[paste_private_key]`. The .gitignore file ensures this never get pushed to Github. This privateKey will be used [here](https://github.com/thinkocapo/hash-tronic/blob/dev/utils.js#L43) to verify your ownership of the account address being used to send ether.
+3. `npm start sendEther 0.003` The recipient will default to whatever you put as `reciepientAddress=[paste_address]` in your `.env`. Or specify it as a [3rd argument](https://github.com/thinkocapo/hash-tronic/blob/dev/index.js#L22) to `npm start`.
 4. Make sure all the logged output looks good.
 5. Remove the early `return` statement in the sendEther method. Re-run `npm start sendEther 0.003` so the transaction will go through
 6. You'll see a resulting Transaction Hash logged as output. Visit the following links the [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
@@ -24,17 +24,20 @@ let web3 = new Web3(new Web3.providers.HttpProvider(node))
 
 If your $ didn't go through or its stuck for hours on pending, there might not be anything you can do. Tis the nature of this Wild West we call cryptocurrencies. 
 
-### IMPORTANT to Understand - Transaction vs Raw Transaction
-**Raw Transaction** - You sign the transaction object using your privateKey, before sending it to the ethereum node. This generates the raw bytes. Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
+### Transaction vs Raw Transaction
+**Raw Transaction**
+- You sign the transaction object using your privateKey, before sending it to the ethereum node. This generates the raw bytes. Basically a raw transaction is a machine representation of a transaction, with the signature attached to it.
 ```
 transaction.sign(privateKey)
 web3.eth.sendSignedTransaction('0x' + transaction.toString('hex'))
 ```
-**Raw bytes are required if you are using a platform like MyEtherWallet/Infura/Etherscan, which do not not handle private keys but deal only with signed transactions.**
-**If you are running geth (ethereum node) yourself locally, then you can manage your own privateKeys (i.e. import them into geth) so you don't have to 'sign' the transaction everytime.**
-[Difference Between Transactions and Raw Transactions - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/6905/difference-between-transactions-and-raw-transactions-in-web3-js)
-[What Is A Raw Transaction Used For - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/18928/what-is-a-raw-transaction-and-what-is-it-used-for)
-**Transaction ** - You already unlocked the account at that node, the node can handle privateKeys.
+- **Raw bytes are required if you are using a platform like MyEtherWallet/Infura/Etherscan, which do not not handle private keys but deal only with signed transactions.**  
+- **If you are running geth (ethereum node) yourself locally, then you can manage your own privateKeys (i.e. import them into geth) so you don't have to 'sign' the transaction everytime.**  
+- [Difference Between Transactions and Raw Transactions - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/6905/difference-between-transactions-and-raw-transactions-in-web3-js)  
+- [What Is A Raw Transaction Used For - ethereum.stackexchange](https://ethereum.stackexchange.com/questions/18928/what-is-a-raw-transaction-and-what-is-it-used-for)
+
+**Transaction**
+- You already unlocked the account at that node, the node can handle privateKeys.
 ```
 web3.accounts[0]
 web3.eth.sendTransaction({
