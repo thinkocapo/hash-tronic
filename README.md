@@ -8,21 +8,21 @@ There are instructions in [/docs/geth.md](https://github.com/thinkocapo/hash-tro
 But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https://www.myetherapi.com/).
 
 ## GETTING STARTED - How to Send Ether
-0. `git clone https://github.com/thinkocapo/hash-tronic.git`
-1. Select which ethereum node (geth) you'll connect to in [index.js#L15](https://github.com/thinkocapo/hash-tronic/blob/master/index.js#L15). I recommend MyEtherWallet's node but you have other options in [/eth-nodes.js](https://github.com/thinkocapo/hash-tronic/blob/dev/ethereum-nodes.js). See [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/geth.md) for instructions on how to run your own.
+1. `git clone https://github.com/thinkocapo/hash-tronic.git`
+2. Select which ethereum node (geth) you'll connect to in [index.js#L15](https://github.com/thinkocapo/hash-tronic/blob/master/index.js#L15). I recommend MyEtherWallet's node but you have other options in [/eth-nodes.js](https://github.com/thinkocapo/hash-tronic/blob/dev/ethereum-nodes.js). See [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/geth.md) for instructions on how to run your own.
 ```
 // tells web3 which ethereum node it will make calls to
 let web3 = new Web3(new Web3.providers.HttpProvider(node))
 ```
-2. Paste your private key in a new `/.env` file as `privateKey=[private_key]`. The .gitignore file ensures this never get pushed to Github. This privateKey will be used [here](https://github.com/thinkocapo/hash-tronic/blob/dev/utils.js#L43) to verify your ownership of the account address being used to send ether. See 'Raw Transaction' section for more technical details.
-3. `npm start sendEther 0.003` The recipient will default to whatever you put as `reciepientAddress=[paste_address]` in your `.env`. Or specify it as a [3rd argument](https://github.com/thinkocapo/hash-tronic/blob/dev/index.js#L22) to `npm start`. 0.003 ether is ~$2.00 worth of ether as of 03/12/18.
-4. Make sure all [loggers](https://github.com/thinkocapo/hash-tronic/blob/dev/transaction-loggers.js) executed, the output looks good, and there are no errors.
-5. Remove the early `return` statement in the sendEther method. Re-run `npm start sendEther 0.003` so the transaction will go through
-6. You'll see a resulting Transaction Hash logged as output. Visit the following links at [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
+3. Paste your private key in a new `/.env` file as `privateKey=[private_key]`. The .gitignore file ensures this never get pushed to Github. This privateKey will be used [here](https://github.com/thinkocapo/hash-tronic/blob/dev/utils.js#L43) to verify your ownership of the account address being used to send ether. See 'Raw Transaction' section for more technical details.
+4. `npm start sendEther 0.003` The recipient will default to whatever you put as `reciepientAddress=[paste_address]` in your `.env`. Or specify it as a [3rd argument](https://github.com/thinkocapo/hash-tronic/blob/dev/index.js#L22) to `npm start`. 0.003 ether is ~$2.00 worth of ether as of 03/12/18.
+5. Make sure all [loggers](https://github.com/thinkocapo/hash-tronic/blob/dev/transaction-loggers.js) executed, the output looks good, and there are no errors.
+6. Remove the early `return` statement in the sendEther method. Re-run `npm start sendEther 0.003` so the transaction will go through
+7. You'll see a resulting Transaction Hash logged as output. Visit the following links at [Etherscan](https://etherscan.io/) Block Explorer to see your transaction's data and status, and view updated balances:  
 `https://etherscan.io/tx/[transactionHash]`  
 `https://etherscan.io/address/[fromAddress]`  
 `https://etherscan.io/address/[recipientAddress]`  
-7. If your $ didn't go through or its stuck for days on pending, there is no un-do button.
+8. If your $ didn't go through or its stuck for days on pending, there is no un-do button.
 
 ### Raw Transaction vs Transaction
 **Raw Transaction**
