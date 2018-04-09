@@ -1,4 +1,5 @@
 import webThree from 'web3'
+const unit = require('ethjs-unit');
 
 export function gasPriceInEther (gasPrice) {
     const s1 = gasPrice * 21000
@@ -17,7 +18,8 @@ export function rawTxData (inputs, rawTx) {
 
 export function weiAmountBeingSent (ether) {
     const value = ether
-    const weiCalculated = webThree.utils.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei
+    // console.log('wei - web3 PRE caluclation                  ')
+    const weiCalculated = unit.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei // WORKS
     console.log('wei - web3 caluclation                  ', weiCalculated)
     const weiEtherConverter = 3000000000000000 // https://etherconverter.online/ .003 ether is 3000000000000000 wei
     console.log('wei - etherconverter.online calculation ', weiEtherConverter)

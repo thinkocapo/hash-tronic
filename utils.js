@@ -18,8 +18,7 @@ export function createRawTransaction (web3, ether, recipient) {
     
     // SYNCHRONOUS v0.2 format - not working until revert our npm_modules/web3 back to v0.02. currently is still v1.0 (see package.json)
     const gasPrice = web3.eth.gasPrice;
-    console.log('sync gasPrice', gasPrice); // "10000000000000"
-    // console.log('sync gasPrice', gasPrice.toString(10)); // "10000000000000"
+    console.log('sync gasPrice', gasPrice); // gasPrice.toString(10)) "10000000000000"
 
     const txCount = web3.eth.getTransactionCount(process.env.fromAddress)
     console.log('sync txCoun', txCount);
@@ -27,8 +26,25 @@ export function createRawTransaction (web3, ether, recipient) {
     var gasLimit = web3.eth.getBlock("latest").gasLimit
     console.log('sync gasLimit', gasLimit);
 
+    const wei = LOG.weiAmountBeingSent(ether)
+
+    // **TODO** web3.utils.toHex needs v0.2 syntax
+    console.log('web3.toWei', web3.toWei)
+    const rawTx = {
+        nonce: hex(txCount),
+        gas: hex("21000"), // web3.utils.toHex()
+        gasPrice: hex(web3.toWei('10', 'gwei')), // web3.utils.toHex(())
+        to: recipient,
+        value: hex(wei)
+    }
+    console.log('FOUND IT')    
+    
+    LOG.gasPriceInEther(gasPrice)      
+    LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
+
+    return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
+
     // ASYNCHRONOUS v1 format
-    return
     // return Promise.all([web3.eth.getGasPrice(), web3.eth.getTransactionCount(process.env.fromAddress), web3.eth.getBlock('latest')])
     //     .then(results => {
     //         gasPrice = results[0]
@@ -59,6 +75,6 @@ export function createSignedSerializedTransaction (transaction, pKey) {
     return txSerialized
 }
 
-function hex (gasPrice) {
-    return webThree.utils.toHex(gasPrice)
+function hex (number) {
+    return webThree.toHex(number)
 }
