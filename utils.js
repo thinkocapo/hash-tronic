@@ -15,6 +15,11 @@ const LOG = require('./transaction-loggers')
 // Make web3 calls to get data for Raw Transaction object tx
 export function createRawTransaction (web3, ether, recipient) {
     let gasPrice, txCount, gasLimit;
+    // SYNCHRONOUS v0.2 format
+    
+
+
+    // ASYNCHRONOUS v1 format
     return Promise.all([web3.eth.getGasPrice(), web3.eth.getTransactionCount(process.env.fromAddress), web3.eth.getBlock('latest')])
         .then(results => {
             gasPrice = results[0]
