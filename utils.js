@@ -22,7 +22,7 @@ export function createRawTransaction (web3, ether, recipient) {
     // console.log('sync gasPrice', gasPrice.toString(10)); // "10000000000000"
 
     const txCount = web3.eth.getTransactionCount(process.env.fromAddress)
-    console.log('sync txCoun', number);
+    console.log('sync txCoun', txCount);
 
     var gasLimit = web3.eth.getBlock("latest").gasLimit
     console.log('sync gasLimit', gasLimit);
