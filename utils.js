@@ -43,28 +43,6 @@ export function createRawTransaction (web3, ether, recipient) {
     LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
 
     return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
-
-    // ASYNCHRONOUS v1 format
-    // return Promise.all([web3.eth.getGasPrice(), web3.eth.getTransactionCount(process.env.fromAddress), web3.eth.getBlock('latest')])
-    //     .then(results => {
-    //         gasPrice = results[0]
-    //         txCount = results[1]
-    //         gasLimit = results[2].gasLimit
-    //         const wei = LOG.weiAmountBeingSent(ether)
-
-    //         const rawTx = {
-    //             nonce: hex(txCount),
-    //             gas: web3.utils.toHex("21000"),
-    //             gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
-    //             to: recipient,
-    //             value: hex(wei)
-    //         }
-            
-    //         LOG.gasPriceInEther(gasPrice)      
-    //         LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
-    
-    //         return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
-    //     })
 }
 
 export function createSignedSerializedTransaction (transaction, pKey) {
@@ -78,3 +56,25 @@ export function createSignedSerializedTransaction (transaction, pKey) {
 function hex (number) {
     return webThree.toHex(number)
 }
+
+// ASYNCHRONOUS v1 format
+// return Promise.all([web3.eth.getGasPrice(), web3.eth.getTransactionCount(process.env.fromAddress), web3.eth.getBlock('latest')])
+//     .then(results => {
+//         gasPrice = results[0]
+//         txCount = results[1]
+//         gasLimit = results[2].gasLimit
+//         const wei = LOG.weiAmountBeingSent(ether)
+
+//         const rawTx = {
+//             nonce: hex(txCount),
+//             gas: web3.utils.toHex("21000"),
+//             gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+//             to: recipient,
+//             value: hex(wei)
+//         }
+        
+//         LOG.gasPriceInEther(gasPrice)      
+//         LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
+
+//         return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
+//     })
