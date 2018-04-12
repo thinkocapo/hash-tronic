@@ -10,11 +10,12 @@ export async function sendEther (web3, ether, recipient) {
   return createRawTransaction(web3, ether, recipient)
   .then(rawTransaction => {
     console.log('sync rawTransaction', JSON.stringify(rawTransaction, null,4))
-    return
+    
     const transactionSignedSerialized = createSignedSerializedTransaction(rawTransaction, process.env.privateKey)
 
     return // remove once you've confirmed everything in the loggers looks good
-    web3.eth.sendSignedTransaction('0x' + transactionSignedSerialized.toString('hex'))
+    // 04/11 sendSignedTransaction in v1.0
+    web3.eth.sendRawTransaction('0x' + transactionSignedSerialized.toString('hex'))
       .then((err, result) => {
         if (err) { console.log('======= err =======\n', JSON.stringify(err,null,4))
         } else { 
