@@ -1,4 +1,3 @@
-// import webThree from 'web3'
 import ethJsTx from 'ethereumjs-tx'
 const LOG = require('./transaction-loggers')
 
@@ -13,10 +12,7 @@ const LOG = require('./transaction-loggers')
  * "chainId":1}
  */
 // Make web3 calls to get data for Raw Transaction object tx
-export function createRawTransaction (web3, ether, recipient) {
-    // ASYNC - let gasPrice, txCount, gasLimit;
-    
-    // SYNCHRONOUS v0.2 format - not working until revert our npm_modules/web3 back to v0.02. currently is still v1.0 (see package.json)
+export async function createRawTransaction (web3, ether, recipient) {
     const gasPrice = web3.eth.gasPrice;
     console.log('sync gasPrice', gasPrice); // gasPrice.toString(10)) "10000000000000"
 
@@ -28,18 +24,16 @@ export function createRawTransaction (web3, ether, recipient) {
 
     const wei = LOG.weiAmountBeingSent(ether)
 
-    // **TODO** web3.utils.toHex needs v0.2 syntax
     const rawTx = {
         nonce: hex(txCount, web3),
-        gas: hex("21000", web3), // web3.utils.toHex()
-        gasPrice: hex(web3.toWei('10', 'gwei'), web3), // web3.utils.toHex(())
+        gas: hex("21000", web3),
+        gasPrice: hex(web3.toWei('10', 'gwei'), web3),
         to: recipient,
         value: hex(wei, web3)
     }
     LOG.gasPriceInEther(gasPrice, web3)      
     LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
     
-    console.log('HHHEHEERRRREE')
     return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
 }
 
@@ -54,25 +48,3 @@ export function createSignedSerializedTransaction (transaction, pKey) {
 function hex (number, web3) {
     return web3.toHex(number)
 }
-
-// ASYNCHRONOUS v1 format
-// return Promise.all([web3.eth.getGasPrice(), web3.eth.getTransactionCount(process.env.fromAddress), web3.eth.getBlock('latest')])
-//     .then(results => {
-//         gasPrice = results[0]
-//         txCount = results[1]
-//         gasLimit = results[2].gasLimit
-//         const wei = LOG.weiAmountBeingSent(ether)
-
-//         const rawTx = {
-//             nonce: hex(txCount),
-//             gas: web3.utils.toHex("21000"),
-//             gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
-//             to: recipient,
-//             value: hex(wei)
-//         }
-        
-//         LOG.gasPriceInEther(gasPrice)      
-//         LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
-
-//         return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
-//     })

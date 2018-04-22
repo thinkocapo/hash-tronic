@@ -20,7 +20,7 @@ export function weiAmountBeingSent (ether) {
     const value = ether
     // console.log('wei - web3 PRE caluclation                  ')
     const weiCalculated = unit.toWei(value.toString(),'ether') // value 0.003 ether is 3000000000000000 wei // WORKS
-    console.log('wei - web3 caluclation                  ', weiCalculated)
+    console.log('wei - web3 caluclation                  ', weiCalculated) // **TODO** logs <BN: aa87bee538000> instead of 3000000000000000
     const weiEtherConverter = 3000000000000000 // https://etherconverter.online/ .003 ether is 3000000000000000 wei
     console.log('wei - etherconverter.online calculation ', weiEtherConverter)
     return weiCalculated

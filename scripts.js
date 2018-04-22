@@ -9,10 +9,8 @@ let webThree = new Web3
 export async function sendEther (web3, ether, recipient) {
   return createRawTransaction(web3, ether, recipient)
   .then(rawTransaction => {
-    console.log('sync rawTransaction', JSON.stringify(rawTransaction, null,4))
-    
     const transactionSignedSerialized = createSignedSerializedTransaction(rawTransaction, process.env.privateKey)
-
+    
     return // remove once you've confirmed everything in the loggers looks good
     // 04/11 sendSignedTransaction in v1.0
     web3.eth.sendRawTransaction('0x' + transactionSignedSerialized.toString('hex'))
