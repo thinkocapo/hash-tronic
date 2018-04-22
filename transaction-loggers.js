@@ -4,7 +4,7 @@ const unit = require('ethjs-unit');
 export function gasPriceInEther (gasPrice, web3) {
     const s1 = gasPrice * 21000
     const totalEther = web3.fromWei(s1.toString(), "ether")
-    console.log('# of ethere the gasPrice costs - web3   ', totalEther)
+    console.log('\n# of ethere the gasPrice costs - web3   ', totalEther)
     const s2 = 20
     const s3 = web3.toWei(s2.toString(), "gwei") * 21000
     const totalEtherFromVideo = web3.fromWei(s3.toString(), "ether")
@@ -12,8 +12,8 @@ export function gasPriceInEther (gasPrice, web3) {
 }
 
 export function rawTxData (inputs, rawTx) {
-    console.log('Inputs to Raw Transaction\n', inputs)
-    console.log('RAW TRANSACTION          \n', rawTx)
+    console.log('\nINPUTS TO RAW TRANSACTION\n', inputs)
+    console.log('\nRAW TRANSACTION\n', rawTx)
 }
 
 export function weiAmountBeingSent (ether) {

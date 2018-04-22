@@ -13,14 +13,9 @@ const LOG = require('./transaction-loggers')
  */
 // Make web3 calls to get data for Raw Transaction object tx
 export async function createRawTransaction (web3, ether, recipient) {
-    const gasPrice = web3.eth.gasPrice;
-    console.log('sync gasPrice', gasPrice); // gasPrice.toString(10)) "10000000000000"
-
+    const gasPrice = web3.eth.gasPrice; // gasPrice.toString(10)) "10000000000000"
     const txCount = web3.eth.getTransactionCount(process.env.fromAddress)
-    console.log('sync txCoun', txCount);
-
     var gasLimit = web3.eth.getBlock("latest").gasLimit
-    console.log('sync gasLimit', gasLimit);
 
     const wei = LOG.weiAmountBeingSent(ether)
 
