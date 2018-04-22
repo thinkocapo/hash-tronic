@@ -1,4 +1,4 @@
-import webThree from 'web3'
+// import webThree from 'web3'
 import ethJsTx from 'ethereumjs-tx'
 const LOG = require('./transaction-loggers')
 
@@ -29,19 +29,17 @@ export function createRawTransaction (web3, ether, recipient) {
     const wei = LOG.weiAmountBeingSent(ether)
 
     // **TODO** web3.utils.toHex needs v0.2 syntax
-    console.log('web3.toWei', web3.toWei)
     const rawTx = {
-        nonce: hex(txCount),
-        gas: hex("21000"), // web3.utils.toHex()
-        gasPrice: hex(web3.toWei('10', 'gwei')), // web3.utils.toHex(())
+        nonce: hex(txCount, web3),
+        gas: hex("21000", web3), // web3.utils.toHex()
+        gasPrice: hex(web3.toWei('10', 'gwei'), web3), // web3.utils.toHex(())
         to: recipient,
-        value: hex(wei)
+        value: hex(wei, web3)
     }
-    console.log('FOUND IT')    
-    
-    LOG.gasPriceInEther(gasPrice)      
+    LOG.gasPriceInEther(gasPrice, web3)      
     LOG.rawTxData({nonce: txCount, gasPrice, gasLimit, to: recipient, value: ether, chainId: process.env.chainId, data: ""}, rawTx)
-
+    
+    console.log('HHHEHEERRRREE')
     return new ethJsTx(rawTx) // Transaction: { raw: [<Buffer >], _fields: ['nonce',]}  
 }
 
@@ -53,8 +51,8 @@ export function createSignedSerializedTransaction (transaction, pKey) {
     return txSerialized
 }
 
-function hex (number) {
-    return webThree.toHex(number)
+function hex (number, web3) {
+    return web3.toHex(number)
 }
 
 // ASYNCHRONOUS v1 format

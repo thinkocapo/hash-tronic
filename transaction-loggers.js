@@ -1,13 +1,13 @@
 import webThree from 'web3'
 const unit = require('ethjs-unit');
 
-export function gasPriceInEther (gasPrice) {
+export function gasPriceInEther (gasPrice, web3) {
     const s1 = gasPrice * 21000
-    const totalEther = webThree.utils.fromWei(s1.toString(), "ether")
+    const totalEther = web3.fromWei(s1.toString(), "ether")
     console.log('# of ethere the gasPrice costs - web3   ', totalEther)
     const s2 = 20
-    const s3 = webThree.utils.toWei(s2.toString(), "gwei") * 21000
-    const totalEtherFromVideo = webThree.utils.fromWei(s3.toString(), "ether")
+    const s3 = web3.toWei(s2.toString(), "gwei") * 21000
+    const totalEtherFromVideo = web3.fromWei(s3.toString(), "ether")
     console.log('# of ether the gasPrice costs - tutorial', totalEtherFromVideo)
 }
 
