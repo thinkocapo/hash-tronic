@@ -10,9 +10,11 @@ export async function sendEther (web3, ether, recipient) {
   return createRawTransaction(web3, ether, recipient)
   .then(rawTransaction => {
     const transactionSignedSerialized = createSignedSerializedTransaction(rawTransaction, process.env.privateKey)
-
+    
+    console.log('\n=== EARLY RETURN - DONE - DO NOT RUN web3.eth.sendRawTransaction ===')
     return // remove once you've confirmed everything in the loggers looks good
-    web3.eth.sendSignedTransaction('0x' + transactionSignedSerialized.toString('hex'))
+    // Test before merge Master - in v1.0 it was sendSignedTransaction, which was successfully tested
+    web3.eth.sendRawTransaction('0x' + transactionSignedSerialized.toString('hex'))
       .then((err, result) => {
         if (err) { console.log('======= err =======\n', JSON.stringify(err,null,4))
         } else { 

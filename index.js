@@ -22,4 +22,5 @@ const ether = process.argv[3] || 0.003 // ~$2 USD
 const recipient = process.argv[4] || process.env.recipientAddress
 
 // Call the sendEther script
+// npm start sendEther 0.003
 scripts[scriptName](web3, ether, recipient)

@@ -3,6 +3,33 @@ Hashtronic was conceived as a trading arbitrage bot that sends ether to the [EOS
 
 Currently this repo has code for **sending ether from one address to another** on the mainnet, the real public ethereum blockchain. You can send to either an account address or to a contract address (a.k.a. externally owned account)like EOS. [Account Address vs Contract Address](https://github.com/ethereum/wiki/wiki/White-Paper#ethereum-accounts). We will use [web3.js](https://github.com/ethereum/web3.js/) to do that.
 
+#### LOGGED OUTPUT
+```
+wei - web3 caluclation                   <BN: aa87bee538000>
+wei - etherconverter.online calculation  3000000000000000
+
+# of ethere the gasPrice costs - web3    0.000063
+# of ether the gasPrice costs - tutorial 0.00042
+
+INPUTS TO RAW TRANSACTION
+ { nonce: 17,
+  gasPrice: { [String: '3000000000'] s: 1, e: 9, c: [ 3000000000 ] },
+  gasLimit: 7999992,
+  to: '0xD8479D6c2b49276F8Dc750EFbe4C3BF8b84D073e',
+  value: 0.003,
+  chainId: '1',
+  data: '' }
+
+RAW TRANSACTION
+ { nonce: '0x11',
+  gas: '0x5208',
+  gasPrice: '0x2540be400',
+  to: '0xD8479D6c2b49276F8Dc750EFbe4C3BF8b84D073e',
+  value: '0x226161383762656535333830303022' }
+
+=== EARLY RETURN - DONE - DO NOT RUN web3.eth.sendRawTransaction ===
+```
+
 There are instructions in [/docs/geth.md](https://github.com/thinkocapo/hash-tronic/tree/master/docs/geth.md) on how to run an ethereum node using [geth](https://github.com/ethereum/go-ethereum/wiki/geth), the command line interface for running a full ethereum node implemented in Go. Additional notes and links in [/docs/tools.md](https://github.com/thinkocapo/hash-tronic/blob/master/docs/tools.md) on all tools involved.
 
 But for simplicity I've chosen to connect to [MyEtherWallet's geth node](https://www.myetherapi.com/).
